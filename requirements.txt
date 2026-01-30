@@ -1,4 +1,5 @@
 Flask
+gunicorn
 Flask-SQLAlchemy
 Flask-Login
 Flask-Bcrypt
@@ -6,3 +7,4 @@ Pillow
 numpy
 pandas
 scikit-learn
+
