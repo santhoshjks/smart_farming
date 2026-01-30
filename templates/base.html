@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFarming AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=3">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <nav>
+        <a href="/" class="logo">🌱 SmartFarming</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/crop">Crop Recommendation</a>
+            <a href="/fertilizer">Fertilizer</a>
+            <a href="/disease">Disease Check</a>
+        </div>
+        <div class="user-menu">
+            {% if current_user.is_authenticated %}
+            <div class="user-info">
+                <span class="user-avatar">{{ current_user.username[0]|upper }}</span>
+                <span>{{ current_user.username }}</span>
+            </div>
+            <a href="{{ url_for('logout') }}" class="btn-logout" id="logoutLink">Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="btn-login">Login</a>
+            <a href="{{ url_for('register') }}" class="btn-outline"
+                style="margin-left: 0.5rem; padding: 0.5rem 1rem; font-size: 0.85rem; text-decoration: none;">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-container" style="margin-bottom: 1.5rem;">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Result Overlay -->
+    <div class="result-overlay" id="resultOverlay">
+        <div class="result-card">
+            <button class="close-btn">&times;</button>
+            <span class="result-icon" id="resultIcon">🌱</span>
+            <h2 id="resultTitle">Result</h2>
+            <p id="resultMessage">Analysis complete.</p>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Overlay -->
+    <div class="result-overlay" id="logoutOverlay">
+        <div class="result-card confirm-card">
+            <span class="result-icon">🚪</span>
+            <h2>Logout Confirmation</h2>
+            <p>Are you sure you want to log out of SmartFarming AI?</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                <button class="btn btn-outline" id="cancelLogout" style="margin: 0;">Cancel</button>
+                <a href="{{ url_for('logout') }}" class="btn"
+                    style="background: #e74c3c; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

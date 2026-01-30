@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-content">
+        <h1>The Future of Agriculture is Here</h1>
+        <p>Leverage the power of AI to optimize your harvest. Get personalized crop recommendations, precise fertilizer
+            suggestions, and instant plant disease diagnosis.</p>
+        <a href="/crop" class="btn">Get Started</a>
+        <a href="#features" class="btn btn-outline">Learn More</a>
+    </div>
+    <!-- You could put a generated image here or a nice CSS illustration -->
+    <div class="hero-image" style="font-size: 10rem; text-shadow: 0 0 50px rgba(46, 204, 113, 0.5);">
+        🌿
+    </div>
+</div>
+
+<div id="features" class="features-grid">
+    <a href="/crop" class="feature-card">
+        <span class="feature-icon">🌾</span>
+        <h3>Crop Recommendation</h3>
+        <p>Input your soil data (N, P, K) and environmental conditions to find the perfect crop for maximum yield.</p>
+    </a>
+    <a href="/fertilizer" class="feature-card">
+        <span class="feature-icon">🧪</span>
+        <h3>Fertilizer Advisor</h3>
+        <p>Get tailored fertilizer recommendations based on soil nutrient depletion to restore health.</p>
+    </a>
+    <a href="/disease" class="feature-card">
+        <span class="feature-icon">🦠</span>
+        <h3>Disease Detection</h3>
+        <p>Upload a photo of your plant leaf and let our AI diagnose diseases and suggest cures instantly.</p>
+    </a>
+</div>
+{% endblock %}

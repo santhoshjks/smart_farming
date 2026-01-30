@@ -1,0 +1,56 @@
+Crop,Soil_Type,Symptoms,Nitrogen_Level,Phosphorus_Level,Potassium_Level,Recommended_Fertilizer
+Rice,Sandy,Yellow Leaves (Nitrogen Deficiency),Low,Normal,Normal,Urea (46% N)
+Rice,Loamy,Stunted Growth (Phosphorus Deficiency),Normal,Low,Normal,DAP (Diammonium Phosphate)
+Rice,Clay,Burnt Edges (Potassium Deficiency),Normal,Normal,Low,MOP (Muriate of Potash)
+Rice,Black,Healthy,Normal,Normal,Normal,Organic Compost
+Rice,Alluvial,Weak Roots,Normal,Low,Normal,Super Phosphate
+Wheat,Loamy,Yellow Leaves (Nitrogen Deficiency),Low,Normal,Normal,Urea
+Wheat,Sandy,Weak Roots (Phosphorus Deficiency),Normal,Low,Normal,Super Phosphate
+Wheat,Black,Poor Grain Filling (Potassium Deficiency),Normal,Normal,Low,NPK 10-26-26
+Wheat,Clay,Pale Green Color,Low,Normal,Normal,Ammonium Sulphate
+Maize,Red,Purple Leaves (Phosphorus Deficiency),Normal,Low,Normal,DAP
+Maize,Clay,Yellow Leaves (Nitrogen Deficiency),Low,Normal,Normal,Ammonium Nitrate
+Maize,Sandy,Stunted Growth,Low,Low,Normal,NPK 20-20-20
+Cotton,Black,Reddening of Leaves (Magnesium/N Deficiency),Low,Normal,Normal,Magnesium Sulphate + Urea
+Cotton,Black,Small Bolls,Normal,Normal,Low,Sulphate of Potash
+Cotton,Loamy,Yellowing between veins,Low,Normal,Normal,Zinc Sulphate
+Sugarcane,Loamy,Yellowing,Low,Normal,Normal,Urea
+Sugarcane,Clay,Stunted Growth,Normal,Low,Normal,DAP
+Sugarcane,Red,Thin Canes,Normal,Normal,Low,MOP
+Tomato,Loamy,Blossom End Rot (Calcium Deficiency),Normal,Normal,Normal,Calcium Nitrate
+Tomato,Sandy,Yellow Leaves,Low,Normal,Normal,Ammonium Sulphate
+Tomato,Black,Poor Fruit Set,Normal,Low,Normal,Boron + DAP
+Potato,Sandy,Small Tubers,Normal,Normal,Low,Sulphate of Potash
+Potato,Loamy,Leaf Rolling,Low,Normal,Normal,Urea
+Potato,Clay,Black spots on leaves,Normal,Normal,Low,MOP
+Chickpea,Loamy,Yellowing (Chlorosis),Low,Normal,Normal,Ammonium Sulphate
+Chickpea,Sandy,Poor Root Development,Normal,Low,Normal,Single Super Phosphate
+Kidneybeans,Sandy,Yellowing lower leaves,Low,Normal,Normal,Urea
+Kidneybeans,Loamy,Slow Growth,Normal,Low,Normal,DAP
+Pigeonpeas,Red,Leaf bronzing,Normal,Normal,Low,MOP
+Pigeonpeas,Black,Flowering drop,Normal,Low,Normal,DAP
+Banana,Alluvial,Yellowing of old leaves,Low,Normal,Normal,Urea
+Banana,Loamy,Choke throat,Normal,Normal,Low,Potassium Sulphate
+Banana,Clay,Weak Stem,Normal,Low,Normal,DAP
+Mango,Red,Black tip,Normal,Normal,Normal,Borax
+Mango,Loamy,Leaf Scorch,Normal,Normal,Low,Potassium Chloride
+Mango,Alluvial,Yellowing,Low,Normal,Normal,Urea Spray
+Grapes,Sandy,Interveinal Chlorosis,Low,Normal,Normal,Magnesium Sulphate
+Grapes,Loamy,Small Berries,Normal,Normal,Low,Sulphate shall Potash
+Grapes,Clay,Slow growth,Low,Low,Low,NPK 19-19-19
+Watermelon,Sandy,Hollow Heart,Low,Normal,Normal,Nitrogen (Controlled)
+Watermelon,Loamy,Poor sweetness,Normal,Normal,Low,MOP (increase Potash)
+Apple,Loamy,Bitter Pit,Normal,Normal,Normal,Calcium Spray
+Apple,Red,Poor Color,Normal,Normal,Low,Potassium
+Orange,Loamy,Yellowing,Low,Normal,Normal,Zinc + Urea
+Orange,Sandy,Fruit Splitting,Normal,Normal,Low,Potassium Nitrate
+Papaya,Loamy,Yellowing,Low,Normal,Normal,Ammonium Sulphate
+Papaya,Red,Leaf Curling,Normal,Normal,Low,Potassium
+Coconut,Sandy,Button Shedding,Normal,Low,Low,Borax + DAP
+Coconut,Loamy,Yellowing,Low,Normal,Normal,Urea
+Jute,Alluvial,Stunted,Low,Normal,Normal,Urea
+Jute,Clay,Weak fiber,Normal,Normal,Low,Potash
+Coffee,Red,Die back,Normal,Normal,Low,Potash
+Coffee,Loamy,Berry drop,Normal,Low,Normal,DAP
+Tobacco,Red,Sand drown (Magnesium def),Normal,Normal,Normal,Dolomite
+Tobacco,Loamy,Yellowing,Low,Normal,Normal,Ammonium Nitrate

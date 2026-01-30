@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h2>🧪 Fertilizer Advisor</h2>
+        <p>Optimize your soil health with the right nutrients.</p>
+    </div>
+
+    <form data-endpoint="/api/predict-fertilizer-simplified">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="cropType">What crop are you growing?</label>
+                <select name="crop_type" id="cropType" required>
+                    <option value="" disabled selected>Select Crop</option>
+                    <option value="wheat">Wheat</option>
+                    <option value="rice">Rice / Paddy</option>
+                    <option value="maize">Maize / Corn</option>
+                    <option value="cotton">Cotton</option>
+                    <option value="tobacco">Tobacco</option>
+                    <option value="sugarcane">Sugarcane</option>
+                    <option value="pulses">Pulses / Beans</option>
+                    <option value="fruit">Fruits (General)</option>
+                    <option value="vegetable">Vegetables (General)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="soilTypeFert">Soil Type</label>
+                <select name="soil_type" id="soilTypeFert" required>
+                    <option value="sandy">Sandy (Gritty)</option>
+                    <option value="loamy">Loamy (Crumbly)</option>
+                    <option value="black">Black (Clay-like)</option>
+                    <option value="red">Red (Dusty)</option>
+                    <option value="clayey">Clayey (Sticky)</option>
+                </select>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="landSize">Land Size</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" name="land_size" id="landSize" step="0.1" placeholder="e.g. 2.5" required
+                        style="flex: 2;">
+                    <select name="land_unit" style="flex: 1;">
+                        <option value="acres">Acres</option>
+                        <option value="hectares">Hectares</option>
+                        <option value="sq_meter">Sq. Meters</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="symptomsInput">Plant Condition / Symptoms</label>
+                <select name="symptoms" id="symptomsInput" required>
+                    <option value="healthy">Healthy / Routine Care</option>
+                    <option value="yellow_leaves">Leaves turning yellow (Chlorosis)</option>
+                    <option value="stunted">Stunted Growth (Small plants)</option>
+                    <option value="weak_root">Weak Roots / Falling over</option>
+                    <option value="purple_leaves">Purplish tint on leaves</option>
+                    <option value="burnt_edges">Burnt/dried leaf edges</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Get Fertilizer Advice</button>
+    </form>
+</div>
+{% endblock %}

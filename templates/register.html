@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <span class="auth-icon">🌱</span>
+            <h2>Create Account</h2>
+            <p>Join SmartFarming and start growing smarter</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form class="auth-form" method="POST" action="{{ url_for('register') }}">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="username" name="username" placeholder="Choose a username" required
+                        minlength="3">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">📧</span>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="password" name="password" placeholder="Create a password" required
+                        minlength="6">
+                </div>
+                <span class="input-hint">Must be at least 6 characters</span>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔐</span>
+                    <input type="password" id="confirm_password" name="confirm_password"
+                        placeholder="Confirm your password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-auth">
+                <span>Create Account</span>
+                <span class="btn-arrow">→</span>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+        </div>
+
+        <div class="auth-divider">
+            <span>or</span>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">
+            <span>← Back to Home</span>
+        </a>
+    </div>
+
+    <div class="auth-visual">
+        <div class="visual-content">
+            <span class="visual-emoji">🚀</span>
+            <h3>Get Started Today</h3>
+            <p>Create your free account and unlock the power of AI-driven farming insights.</p>
+            <div class="visual-benefits">
+                <div class="visual-benefit">
+                    <span class="benefit-icon">✓</span>
+                    <span>Free to use</span>
+                </div>
+                <div class="visual-benefit">
+                    <span class="benefit-icon">✓</span>
+                    <span>AI-powered analysis</span>
+                </div>
+                <div class="visual-benefit">
+                    <span class="benefit-icon">✓</span>
+                    <span>Real-time recommendations</span>
+                </div>
+                <div class="visual-benefit">
+                    <span class="benefit-icon">✓</span>
+                    <span>Disease detection</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

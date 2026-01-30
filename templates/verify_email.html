@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <span class="auth-icon">📧</span>
+            <h2>Verify Your Email</h2>
+            <p>We've sent a verification code to <strong>{{ email }}</strong></p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Email Status -->
+        <div id="emailStatus" class="email-status">
+            <div class="status-pending">
+                <span class="status-icon">⏳</span>
+                <span>Click "Send Code" to receive your verification email</span>
+            </div>
+        </div>
+
+        <form class="auth-form" method="POST" action="{{ url_for('verify_email') }}" id="verifyForm">
+            <div class="form-group">
+                <label for="otp0">Verification Code</label>
+                <div class="otp-inputs" id="otpInputs">
+                    <input type="text" maxlength="1" id="otp0" class="otp-input" data-index="0" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" data-index="1" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" data-index="2" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" data-index="3" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" data-index="4" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" data-index="5" autocomplete="off">
+                </div>
+                <input type="hidden" name="code" id="fullCode">
+            </div>
+
+            <button type="submit" class="btn btn-auth" id="verifyBtn">
+                <span>Verify Email</span>
+                <span class="btn-arrow">→</span>
+            </button>
+        </form>
+
+        <div class="resend-section">
+            <p>Didn't receive the code?</p>
+            <button type="button" class="btn-resend" id="sendCodeBtn">
+                <span id="sendCodeText">📤 Send Code</span>
+            </button>
+            <span id="countdown" class="countdown"></span>
+        </div>
+
+        <div class="auth-divider">
+            <span>or</span>
+        </div>
+
+        <a href="{{ url_for('register') }}" class="btn btn-secondary">
+            <span>← Back to Register</span>
+        </a>
+    </div>
+
+    <div class="auth-visual">
+        <div class="visual-content">
+            <span class="visual-emoji">✉️</span>
+            <h3>Check Your Inbox</h3>
+            <p>Enter the 6-digit verification code sent to your email address.</p>
+            <div class="visual-benefits">
+                <div class="visual-benefit">
+                    <span class="benefit-icon">1</span>
+                    <span>Click "Send Code" button</span>
+                </div>
+                <div class="visual-benefit">
+                    <span class="benefit-icon">2</span>
+                    <span>Check your email inbox</span>
+                </div>
+                <div class="visual-benefit">
+                    <span class="benefit-icon">3</span>
+                    <span>Enter the 6-digit code</span>
+                </div>
+                <div class="visual-benefit">
+                    <span class="benefit-icon">4</span>
+                    <span>Click verify to complete</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<script>
+    // ============================================
+    // EmailJS Configuration - UPDATE THESE VALUES
+    // ============================================
+    const EMAILJS_PUBLIC_KEY = 'Tt_nRx1T0PsOLBHCr';      // Get from EmailJS dashboard
+    const EMAILJS_SERVICE_ID = 'service_wj64bsi';      // Your EmailJS service ID
+    const EMAILJS_TEMPLATE_ID = 'template_78u2s18';    // Your EmailJS template ID
+    // ============================================
+
+    // Initialize EmailJS
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+
+    // Store verification code from server
+    let verificationCode = "{{ verification_code }}";
+    const userEmail = "{{ email }}";
+
+    // OTP Input handling
+    const otpInputs = document.querySelectorAll('.otp-input');
+    const fullCodeInput = document.getElementById('fullCode');
+
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+            const value = e.target.value;
+
+            // Only allow numbers
+            if (!/^\d*$/.test(value)) {
+                e.target.value = '';
+                return;
+            }
+
+            // Move to next input
+            if (value && index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
+            }
+
+            // Update hidden input with full code
+            updateFullCode();
+        });
+
+        input.addEventListener('keydown', (e) => {
+            // Handle backspace
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                otpInputs[index - 1].focus();
+            }
+        });
+
+        // Handle paste
+        input.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+
+            pastedData.split('').forEach((char, i) => {
+                if (otpInputs[i]) {
+                    otpInputs[i].value = char;
+                }
+            });
+
+            updateFullCode();
+            if (pastedData.length === 6) {
+                otpInputs[5].focus();
+            }
+        });
+    });
+
+    function updateFullCode() {
+        fullCodeInput.value = Array.from(otpInputs).map(input => input.value).join('');
+    }
+
+    // Send Code Button
+    const sendCodeBtn = document.getElementById('sendCodeBtn');
+    const sendCodeText = document.getElementById('sendCodeText');
+    const countdownEl = document.getElementById('countdown');
+    const emailStatus = document.getElementById('emailStatus');
+    let cooldownTimer = null;
+
+    sendCodeBtn.addEventListener('click', async () => {
+        if (!userEmail || userEmail === "") {
+            alert("Error: Recipient email is missing. Please register again.");
+            return;
+        }
+
+        sendCodeBtn.disabled = true;
+        sendCodeText.textContent = '📤 Sending...';
+
+        try {
+            // First, get a fresh code from the server
+            const resendResponse = await fetch('/resend-code', { method: 'POST' });
+            const resendData = await resendResponse.json();
+
+            if (resendData.success) {
+                verificationCode = resendData.code;
+            }
+
+            // Log parameters for debugging
+            console.log("Sending EmailJS params:", {
+                to_email: userEmail,
+                verification_code: verificationCode,
+                to_name: userEmail.split('@')[0]
+            });
+
+            // Send email via EmailJS
+            const templateParams = {
+                to_email: userEmail,
+                verification_code: verificationCode,
+                to_name: userEmail.split('@')[0]
+            };
+
+            const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+            console.log("EmailJS Success:", response);
+
+            // Success
+            emailStatus.innerHTML = `
+                <div class="status-success">
+                    <span class="status-icon">✅</span>
+                    <span>Verification code sent to <strong>${userEmail}</strong></span>
+                </div>
+            `;
+
+            // Start cooldown
+            startCooldown(60);
+
+        } catch (error) {
+            console.error('EmailJS Error:', error);
+            emailStatus.innerHTML = `
+                <div class="status-error">
+                    <span class="status-icon">❌</span>
+                    <span>Failed to send email. Please check EmailJS configuration.</span>
+                </div>
+            `;
+            sendCodeBtn.disabled = false;
+            sendCodeText.textContent = '📤 Send Code';
+        }
+    });
+
+    function startCooldown(seconds) {
+        let remaining = seconds;
+        sendCodeText.textContent = '📤 Resend Code';
+
+        cooldownTimer = setInterval(() => {
+            remaining--;
+            countdownEl.textContent = `(${remaining}s)`;
+
+            if (remaining <= 0) {
+                clearInterval(cooldownTimer);
+                countdownEl.textContent = '';
+                sendCodeBtn.disabled = false;
+            }
+        }, 1000);
+    }
+
+    // Focus first input on load
+    otpInputs[0].focus();
+</script>
+
+<style>
+    /* OTP Inputs */
+    .otp-inputs {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        margin-top: 0.5rem;
+    }
+
+    .otp-input {
+        width: 50px;
+        height: 60px;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid var(--card-border);
+        border-radius: 12px;
+        color: var(--text-main);
+        transition: all 0.3s ease;
+    }
+
+    .otp-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.15);
+    }
+
+    .otp-input:not(:placeholder-shown) {
+        border-color: var(--primary);
+    }
+
+    /* Resend Section */
+    .resend-section {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: var(--text-muted);
+    }
+
+    .resend-section p {
+        margin-bottom: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .btn-resend {
+        background: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        padding: 0.6rem 1.5rem;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-resend:hover:not(:disabled) {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-resend:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .countdown {
+        margin-left: 0.5rem;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    /* Email Status */
+    .email-status {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .status-pending {
+        color: var(--accent);
+    }
+
+    .status-success {
+        color: var(--primary);
+    }
+
+    .status-error {
+        color: #e74c3c;
+    }
+
+    .status-icon {
+        margin-right: 0.5rem;
+    }
+
+    @media (max-width: 480px) {
+        .otp-input {
+            width: 42px;
+            height: 50px;
+            font-size: 1.25rem;
+        }
+
+        .otp-inputs {
+            gap: 0.5rem;
+        }
+    }
+</style>
+{% endblock %}

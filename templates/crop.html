@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h2>🌾 Crop Recommendation</h2>
+        <p>Enter soil and weather conditions to find the most suitable crop.</p>
+    </div>
+
+    <form data-endpoint="/api/predict-crop-simplified">
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label for="soilType">What does your soil look like? (Soil Type)</label>
+                <select name="soil_type" id="soilType" required>
+                    <option value="" disabled selected>Select Soil Appearance</option>
+                    <option value="clay">Clay (Sticky, holds water, usually dark/heavy)</option>
+                    <option value="sandy">Sandy (Gritty, drains fast, light color)</option>
+                    <option value="loamy">Loamy (Crumbly, dark, best for gardens)</option>
+                    <option value="black">Black (Dark black, cracks when dry)</option>
+                    <option value="red">Red (Reddish color, often dusty)</option>
+                </select>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="seasonInput">Current Season / Weather</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <select name="season" id="seasonInput" required style="flex: 1;">
+                        <option value="" disabled selected>Select Current Season</option>
+                        <option value="summer">Summer (Hot & Dry)</option>
+                        <option value="winter">Winter (Cold & Dry)</option>
+                        <option value="monsoon">Monsoon / Rainy (Wet & Humid)</option>
+                        <option value="autumn">Autumn / Pleasant</option>
+                    </select>
+                    <button type="button" id="geoBtn" class="btn btn-outline"
+                        style="margin: 0; padding: 0.8rem 1rem; font-size: 0.9rem;">
+                        📍 Use Real Location
+                    </button>
+                </div>
+                <!-- Hidden inputs to store real data -->
+                <input type="hidden" name="real_temp" id="realTemp">
+                <input type="hidden" name="real_humidity" id="realHumidity">
+                <p id="weatherStatus" style="font-size: 0.8rem; color: #2ecc71; margin-top: 5px; display: none;"></p>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="waterInput">Water Availability</label>
+                <select name="water" id="waterInput" required>
+                    <option value="low">Low (Depend on rain only)</option>
+                    <option value="medium">Medium (Can water occasionally)</option>
+                    <option value="high">High (Good irrigation / abundant water)</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Recommend Best Crop</button>
+    </form>
+</div>
+{% endblock %}
