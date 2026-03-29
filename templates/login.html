@@ -9,16 +9,7 @@
             <p>Sign in to access your SmartFarming dashboard</p>
         </div>
 
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">
-            {{ message }}
-        </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
+
 
         <form class="auth-form" method="POST" action="{{ url_for('login') }}">
             <div class="form-group">
@@ -38,8 +29,8 @@
             </div>
 
             <div class="form-options">
-                <label class="checkbox-wrapper">
-                    <input type="checkbox" name="remember">
+                <label class="checkbox-wrapper" for="remember">
+                    <input type="checkbox" name="remember" id="remember">
                     <span class="checkmark"></span>
                     Remember me
                 </label>

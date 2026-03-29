@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartFarming AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=3">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=7">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
 
@@ -13,11 +13,23 @@
 
     <nav>
         <a href="/" class="logo">🌱 SmartFarming</a>
-        <div class="nav-links">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="nav-links" id="navLinks">
             <a href="/">Home</a>
             <a href="/crop">Crop Recommendation</a>
             <a href="/fertilizer">Fertilizer</a>
             <a href="/disease">Disease Check</a>
+            <a href="/simulation">Simulator</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('logout') }}" class="mobile-only nav-auth-link" id="mobileLogoutLink">🚪 Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="mobile-only nav-auth-link">🔑 Login</a>
+            <a href="{{ url_for('register') }}" class="mobile-only nav-auth-link">📝 Register</a>
+            {% endif %}
         </div>
         <div class="user-menu">
             {% if current_user.is_authenticated %}
@@ -53,27 +65,44 @@
 
     <!-- Result Overlay -->
     <div class="result-overlay" id="resultOverlay">
-        <div class="result-card">
-            <button class="close-btn">&times;</button>
+        <div class="result-card" role="dialog" aria-modal="true" aria-labelledby="resultTitle"
+            aria-describedby="resultMessage">
+            <button type="button" class="close-btn" aria-label="Close dialog">&times;</button>
             <span class="result-icon" id="resultIcon">🌱</span>
             <h2 id="resultTitle">Result</h2>
             <p id="resultMessage">Analysis complete.</p>
         </div>
     </div>
 
-    <!-- Logout Confirmation Overlay -->
+    <!-- Animated Logout Confirmation Overlay -->
     <div class="result-overlay" id="logoutOverlay">
-        <div class="result-card confirm-card">
-            <span class="result-icon">🚪</span>
-            <h2>Logout Confirmation</h2>
-            <p>Are you sure you want to log out of SmartFarming AI?</p>
-            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
-                <button class="btn btn-outline" id="cancelLogout" style="margin: 0;">Cancel</button>
-                <a href="{{ url_for('logout') }}" class="btn"
-                    style="background: #e74c3c; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);">Logout</a>
+        <div class="result-card confirm-card logout-dialog" role="alertdialog" aria-modal="true"
+            aria-labelledby="logoutTitle" aria-describedby="logoutDesc">
+            <div class="logout-icon-wrapper">
+                <span class="logout-icon-pulse"></span>
+                <span class="result-icon" style="position: relative; z-index: 1;">🚪</span>
+            </div>
+            <h2 id="logoutTitle">Leaving So Soon?</h2>
+            <p id="logoutDesc">Are you sure you want to log out of SmartFarming AI?</p>
+            <div class="logout-actions">
+                <button type="button" class="btn btn-outline logout-cancel-btn" id="cancelLogout" style="margin: 0;">
+                    ✕ Stay
+                </button>
+                <a href="{{ url_for('logout') }}" class="btn logout-confirm-btn">
+                    🚪 Logout
+                </a>
             </div>
         </div>
     </div>
+    <!-- Floating Report Button -->
+    <a href="mailto:jkssanthosh38@gmail.com?subject=Bug%20Report%20-%20SmartFarming%20AI&body=Hi%20Team%2C%0A%0AI%20found%20an%20issue%3A%0A%0APage%3A%20%0ADescription%3A%20%0ASteps%20to%20Reproduce%3A%20%0A%0AThanks!"
+        class="floating-report-btn" id="floatingReportBtn" title="Report an Issue">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path
+                d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+        </svg>
+        <span class="floating-report-label">Report Issue</span>
+    </a>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>

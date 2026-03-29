@@ -1,56 +1,585 @@
-Crop,Soil_Type,Symptoms,Nitrogen_Level,Phosphorus_Level,Potassium_Level,Recommended_Fertilizer
-Rice,Sandy,Yellow Leaves (Nitrogen Deficiency),Low,Normal,Normal,Urea (46% N)
-Rice,Loamy,Stunted Growth (Phosphorus Deficiency),Normal,Low,Normal,DAP (Diammonium Phosphate)
-Rice,Clay,Burnt Edges (Potassium Deficiency),Normal,Normal,Low,MOP (Muriate of Potash)
-Rice,Black,Healthy,Normal,Normal,Normal,Organic Compost
-Rice,Alluvial,Weak Roots,Normal,Low,Normal,Super Phosphate
-Wheat,Loamy,Yellow Leaves (Nitrogen Deficiency),Low,Normal,Normal,Urea
-Wheat,Sandy,Weak Roots (Phosphorus Deficiency),Normal,Low,Normal,Super Phosphate
-Wheat,Black,Poor Grain Filling (Potassium Deficiency),Normal,Normal,Low,NPK 10-26-26
-Wheat,Clay,Pale Green Color,Low,Normal,Normal,Ammonium Sulphate
-Maize,Red,Purple Leaves (Phosphorus Deficiency),Normal,Low,Normal,DAP
-Maize,Clay,Yellow Leaves (Nitrogen Deficiency),Low,Normal,Normal,Ammonium Nitrate
-Maize,Sandy,Stunted Growth,Low,Low,Normal,NPK 20-20-20
-Cotton,Black,Reddening of Leaves (Magnesium/N Deficiency),Low,Normal,Normal,Magnesium Sulphate + Urea
-Cotton,Black,Small Bolls,Normal,Normal,Low,Sulphate of Potash
-Cotton,Loamy,Yellowing between veins,Low,Normal,Normal,Zinc Sulphate
-Sugarcane,Loamy,Yellowing,Low,Normal,Normal,Urea
-Sugarcane,Clay,Stunted Growth,Normal,Low,Normal,DAP
-Sugarcane,Red,Thin Canes,Normal,Normal,Low,MOP
-Tomato,Loamy,Blossom End Rot (Calcium Deficiency),Normal,Normal,Normal,Calcium Nitrate
-Tomato,Sandy,Yellow Leaves,Low,Normal,Normal,Ammonium Sulphate
-Tomato,Black,Poor Fruit Set,Normal,Low,Normal,Boron + DAP
-Potato,Sandy,Small Tubers,Normal,Normal,Low,Sulphate of Potash
-Potato,Loamy,Leaf Rolling,Low,Normal,Normal,Urea
-Potato,Clay,Black spots on leaves,Normal,Normal,Low,MOP
-Chickpea,Loamy,Yellowing (Chlorosis),Low,Normal,Normal,Ammonium Sulphate
-Chickpea,Sandy,Poor Root Development,Normal,Low,Normal,Single Super Phosphate
-Kidneybeans,Sandy,Yellowing lower leaves,Low,Normal,Normal,Urea
-Kidneybeans,Loamy,Slow Growth,Normal,Low,Normal,DAP
-Pigeonpeas,Red,Leaf bronzing,Normal,Normal,Low,MOP
-Pigeonpeas,Black,Flowering drop,Normal,Low,Normal,DAP
-Banana,Alluvial,Yellowing of old leaves,Low,Normal,Normal,Urea
-Banana,Loamy,Choke throat,Normal,Normal,Low,Potassium Sulphate
-Banana,Clay,Weak Stem,Normal,Low,Normal,DAP
-Mango,Red,Black tip,Normal,Normal,Normal,Borax
-Mango,Loamy,Leaf Scorch,Normal,Normal,Low,Potassium Chloride
-Mango,Alluvial,Yellowing,Low,Normal,Normal,Urea Spray
-Grapes,Sandy,Interveinal Chlorosis,Low,Normal,Normal,Magnesium Sulphate
-Grapes,Loamy,Small Berries,Normal,Normal,Low,Sulphate shall Potash
-Grapes,Clay,Slow growth,Low,Low,Low,NPK 19-19-19
-Watermelon,Sandy,Hollow Heart,Low,Normal,Normal,Nitrogen (Controlled)
-Watermelon,Loamy,Poor sweetness,Normal,Normal,Low,MOP (increase Potash)
-Apple,Loamy,Bitter Pit,Normal,Normal,Normal,Calcium Spray
-Apple,Red,Poor Color,Normal,Normal,Low,Potassium
-Orange,Loamy,Yellowing,Low,Normal,Normal,Zinc + Urea
-Orange,Sandy,Fruit Splitting,Normal,Normal,Low,Potassium Nitrate
-Papaya,Loamy,Yellowing,Low,Normal,Normal,Ammonium Sulphate
-Papaya,Red,Leaf Curling,Normal,Normal,Low,Potassium
-Coconut,Sandy,Button Shedding,Normal,Low,Low,Borax + DAP
-Coconut,Loamy,Yellowing,Low,Normal,Normal,Urea
-Jute,Alluvial,Stunted,Low,Normal,Normal,Urea
-Jute,Clay,Weak fiber,Normal,Normal,Low,Potash
-Coffee,Red,Die back,Normal,Normal,Low,Potash
-Coffee,Loamy,Berry drop,Normal,Low,Normal,DAP
-Tobacco,Red,Sand drown (Magnesium def),Normal,Normal,Normal,Dolomite
-Tobacco,Loamy,Yellowing,Low,Normal,Normal,Ammonium Nitrate
+Temparature,Humidity ,Moisture,Soil Type,Crop Type,Nitrogen,Potassium,Phosphorous,Fertilizer Name
+30,64,65,Black,Cotton,44,12,4,Ammonium Sulphate
+25,72,38,Clayey,Paddy,0,0,33,DAP
+25,57,40,Clayey,Soybean,7,5,31,DAP
+25,67,32,Red,Onion,24,43,45,28-28
+25,61,55,Black,Ground Nuts,0,7,25,14-35-14
+29,63,40,Red,Tomato,11,48,58,DAP
+25,48,32,Sandy,Barley,13,9,22,14-35-14
+30,55,45,Loamy,Paddy,47,21,50,DAP
+25,62,46,Black,Sugarcane,38,71,12,10-26-26
+26,52,40,Red,Pulses,0,6,43,DAP
+31,54,38,Red,Maize,41,3,31,28-28
+30,45,28,Red,Pulses,45,0,0,Urea
+32,55,54,Loamy,Sugarcane,9,0,34,DAP
+21,51,40,Loamy,Wheat,33,0,0,Ammonium Sulphate
+20,60,47,Loamy,Tobacco,50,14,27,Ammonium Sulphate
+25,55,65,Black,Soybean,4,0,35,DAP
+31,57,37,Clayey,Pulses,0,0,26,SSP
+25,67,28,Red,Potato,4,25,10,MOP
+29,55,31,Clayey,Soybean,11,21,21,14-35-14
+28,64,43,Loamy,Ground Nuts,6,13,22,14-35-14
+37,59,51,Black,Sugarcane,42,62,20,10-26-26
+31,60,62,Black,Cotton,39,0,0,Urea
+27,57,51,Black,Millets,3,4,12,DAP
+31,59,47,Loamy,Pulses,0,5,37,DAP
+36,60,49,Loamy,Sugarcane,38,24,11,Ammonium Sulphate
+29,56,42,Sandy,Tomato,34,0,0,Ammonium Sulphate
+27,61,40,Loamy,Maize,0,0,27,SSP
+23,62,44,Clayey,Wheat,26,1,13,28-28
+31,71,61,Black,Paddy,35,0,0,Urea
+30,62,65,Black,Cotton,11,0,42,DAP
+30,63,32,Red,Cotton,42,0,0,Urea
+29,69,59,Black,Cotton,2,0,44,DAP
+22,59,45,Sandy,Tomato,8,0,30,DAP
+33,64,58,Loamy,Chili,15,10,4,28-28
+35,53,63,Black,Oil seeds,41,0,0,Urea
+23,70,26,Red,Maize,9,20,23,14-35-14
+26,56,54,Black,Tobacco,35,0,0,Urea
+25,80,43,Sandy,Potato,33,67,68,28-28
+32,54,36,Red,Millets,15,20,16,28-28
+29,74,55,Black,Paddy,42,7,46,SSP
+22,69,26,Sandy,Onion,44,0,0,Urea
+27,62,46,Clayey,Paddy,43,0,0,Urea
+20,70,28,Sandy,Tomato,16,4,24,28-28
+20,67,37,Sandy,Tomato,5,25,24,14-35-14
+22,62,44,Sandy,Soybean,2,9,0,10-26-26
+35,56,47,Black,Cotton,42,20,12,Urea
+21,50,41,Clayey,Pulses,4,12,10,MOP
+23,60,44,Clayey,Pulses,44,0,0,Urea
+30,61,39,Red,Ground Nuts,0,13,29,14-35-14
+19,60,30,Clayey,Wheat,47,17,3,28-28
+24,53,56,Loamy,Onion,6,43,28,14-35-14
+24,56,57,Black,Soybean,9,0,37,DAP
+36,57,30,Red,Cotton,2,7,22,14-35-14
+27,69,51,Loamy,Cotton,34,0,0,Ammonium Sulphate
+23,60,29,Red,Pulses,3,0,29,SSP
+31,66,52,Black,Cotton,28,19,9,28-28
+33,69,40,Sandy,Chili,14,14,9,17-17-17
+30,66,47,Loamy,Paddy,31,0,0,Ammonium Sulphate
+21,51,55,Loamy,Wheat,6,19,17,10-26-26
+33,58,32,Red,Millets,44,3,9,28-28
+25,51,25,Red,Pulses,36,0,0,Urea
+25,50,34,Clayey,Pulses,0,9,26,14-35-14
+23,53,49,Clayey,Wheat,36,0,0,Urea
+23,54,61,Black,Oil seeds,6,0,31,DAP
+28,70,33,Sandy,Tomato,3,17,24,14-35-14
+27,64,36,Red,Sugarcane,33,70,30,28-28
+29,63,39,Sandy,Cotton,13,19,9,17-17-17
+16,80,52,Loamy,Potato,5,10,11,14-35-14
+23,71,56,Loamy,Tomato,33,0,0,Ammonium Sulphate
+27,58,56,Loamy,Ground Nuts,15,0,31,DAP
+31,69,59,Loamy,Soybean,11,0,29,14-35-14
+23,52,27,Red,Maize,1,20,13,10-26-26
+34,65,48,Loamy,Sugarcane,31,0,0,Ammonium Sulphate
+24,60,62,Black,Wheat,48,7,44,Urea
+27,68,60,Loamy,Soybean,36,0,0,Urea
+16,67,30,Sandy,Potato,35,11,43,DAP
+30,61,62,Black,Paddy,48,12,45,Ammonium Sulphate
+25,66,59,Loamy,Tomato,16,11,35,28-28
+27,62,37,Red,Oil seeds,2,11,19,DAP
+30,56,46,Loamy,Tobacco,5,20,13,10-26-26
+20,50,38,Red,Barley,6,16,18,10-26-26
+18,60,44,Loamy,Barley,12,6,35,DAP
+31,48,35,Red,Oil seeds,9,10,8,17-17-17
+25,59,25,Sandy,Barley,27,3,8,Ammonium Sulphate
+36,55,39,Red,Millets,45,0,0,Urea
+31,61,32,Sandy,Maize,40,6,39,28-28
+32,45,52,Black,Oil seeds,11,15,38,DAP
+29,73,51,Black,Paddy,45,4,2,Urea
+27,64,46,Black,Wheat,36,0,0,Urea
+32,51,38,Red,Tobacco,38,0,0,Urea
+33,68,48,Black,Cotton,13,0,45,DAP
+34,44,60,Loamy,Millets,7,10,10,SSP
+32,66,42,Loamy,Cotton,9,20,17,17-17-17
+29,68,46,Loamy,Onion,0,0,25,SSP
+20,66,38,Red,Potato,12,0,37,DAP
+30,64,47,Clayey,Sugarcane,42,0,0,Urea
+28,64,48,Loamy,Onion,49,27,44,Urea
+32,55,42,Loamy,Soybean,6,8,42,DAP
+30,54,30,Red,Oil seeds,37,0,0,Urea
+32,71,27,Sandy,Chili,30,46,44,28-28
+20,58,27,Sandy,Pulses,31,0,0,Ammonium Sulphate
+37,61,56,Loamy,Sugarcane,15,0,25,28-28
+32,61,28,Red,Ground Nuts,43,0,0,Urea
+27,57,54,Black,Cotton,50,3,16,Urea
+22,52,41,Sandy,Barley,47,8,35,Ammonium Sulphate
+19,51,44,Sandy,Onion,42,57,13,MOP
+34,67,47,Black,Sugarcane,10,0,43,DAP
+31,61,49,Black,Soybean,34,0,0,Ammonium Sulphate
+17,77,36,Red,Potato,30,93,59,28-28
+25,69,33,Sandy,Potato,39,82,50,10-26-26
+25,55,49,Loamy,Onion,42,0,0,Urea
+24,63,49,Black,Oil seeds,24,3,33,28-28
+18,59,32,Clayey,Wheat,42,0,0,Urea
+25,56,65,Black,Paddy,15,25,16,28-28
+28,52,48,Black,Wheat,1,0,36,DAP
+32,49,55,Black,Pulses,36,0,0,Urea
+29,50,32,Sandy,Millets,24,9,7,28-28
+31,62,60,Black,Paddy,43,0,0,Urea
+32,44,47,Clayey,Pulses,0,6,37,DAP
+25,69,27,Sandy,Chili,3,12,13,10-26-26
+29,46,43,Sandy,Millets,30,4,1,Ammonium Sulphate
+32,48,47,Loamy,Oil seeds,4,9,28,14-35-14
+22,52,33,Red,Wheat,9,17,18,17-17-17
+25,64,31,Sandy,Chili,0,7,1,MOP
+28,49,38,Red,Pulses,2,19,12,10-26-26
+30,59,54,Loamy,Cotton,4,15,14,10-26-26
+27,52,39,Red,Ground Nuts,45,0,0,Urea
+30,75,27,Red,Chili,50,19,34,Urea
+23,58,35,Red,Wheat,20,3,10,17-17-17
+33,55,42,Clayey,Cotton,30,1,20,28-28
+25,61,60,Loamy,Wheat,28,8,11,28-28
+26,51,60,Loamy,Sugarcane,44,73,16,MOP
+35,55,32,Red,Tobacco,8,47,25,14-35-14
+31,54,58,Black,Sugarcane,42,26,26,28-28
+21,59,47,Clayey,Wheat,9,12,12,17-17-17
+31,60,40,Loamy,Oil seeds,10,16,16,17-17-17
+18,65,52,Loamy,Potato,12,12,13,17-17-17
+22,72,49,Loamy,Potato,3,0,33,DAP
+23,74,31,Red,Tomato,29,59,25,28-28
+30,61,51,Black,Soybean,8,16,48,DAP
+34,58,56,Loamy,Chili,43,8,13,28-28
+35,60,34,Red,Chili,49,22,38,28-28
+20,62,30,Red,Barley,44,0,0,Urea
+34,57,34,Red,Chili,10,0,35,DAP
+28,64,51,Loamy,Cotton,49,1,27,Ammonium Sulphate
+21,80,47,Loamy,Potato,36,97,34,10-26-26
+21,52,36,Red,Tobacco,14,22,22,14-35-14
+17,61,46,Loamy,Potato,42,0,0,Urea
+31,59,48,Loamy,Ground Nuts,0,3,6,SSP
+25,66,62,Black,Paddy,37,0,0,Urea
+26,47,41,Loamy,Millets,25,7,7,28-28
+22,66,59,Loamy,Tomato,45,52,7,MOP
+27,59,58,Black,Onion,45,58,22,10-26-26
+30,63,39,Sandy,Paddy,8,0,45,DAP
+29,59,60,Loamy,Chili,29,34,21,28-28
+23,55,50,Black,Oil seeds,28,12,10,28-28
+25,67,63,Black,Paddy,6,0,36,DAP
+28,58,49,Black,Cotton,16,6,5,28-28
+33,51,59,Loamy,Ground Nuts,3,0,38,DAP
+26,45,50,Loamy,Millets,42,0,0,Urea
+31,66,49,Loamy,Sugarcane,42,15,40,Urea
+26,47,26,Red,Pulses,31,0,0,Ammonium Sulphate
+24,56,36,Sandy,Ground Nuts,0,0,45,DAP
+31,71,54,Loamy,Tomato,36,0,0,Urea
+22,66,50,Loamy,Potato,33,39,63,28-28
+26,66,25,Red,Tomato,32,0,0,Ammonium Sulphate
+22,58,57,Loamy,Maize,7,14,23,14-35-14
+28,65,58,Loamy,Soybean,11,10,19,17-17-17
+25,52,50,Loamy,Pulses,36,0,0,Urea
+32,62,27,Red,Tomato,0,13,10,10-26-26
+32,65,38,Sandy,Tomato,23,6,9,28-28
+36,60,38,Sandy,Millets,23,6,14,28-28
+35,52,42,Loamy,Millets,4,22,14,10-26-26
+21,46,43,Sandy,Barley,9,0,34,DAP
+23,64,52,Loamy,Barley,21,7,21,28-28
+27,57,41,Sandy,Chili,45,24,46,SSP
+26,52,55,Loamy,Ground Nuts,14,0,33,DAP
+29,58,57,Loamy,Millets,9,2,10,17-17-17
+25,59,52,Loamy,Sugarcane,35,0,0,Urea
+38,59,27,Red,Cotton,6,20,25,14-35-14
+21,63,58,Loamy,Tobacco,30,59,32,28-28
+30,72,45,Black,Paddy,7,4,44,DAP
+35,67,49,Loamy,Cotton,32,0,0,Ammonium Sulphate
+36,51,35,Clayey,Sugarcane,33,22,2,28-28
+32,64,31,Clayey,Soybean,9,12,5,10-26-26
+34,63,26,Red,Maize,18,19,19,28-28
+25,59,55,Black,Soybean,6,4,5,20-20
+22,62,53,Black,Maize,0,18,3,10-26-26
+27,61,47,Loamy,Tomato,7,0,44,DAP
+23,64,54,Loamy,Potato,12,0,30,DAP
+30,57,40,Sandy,Barley,2,22,18,10-26-26
+24,60,34,Red,Chili,39,42,44,SSP
+24,58,33,Red,Chili,21,33,26,28-28
+29,73,25,Red,Tomato,46,46,42,28-28
+26,66,44,Clayey,Soybean,7,12,0,MOP
+32,63,35,Sandy,Tobacco,14,0,32,DAP
+28,56,33,Sandy,Barley,39,0,0,Urea
+23,71,36,Sandy,Tomato,10,0,28,SSP
+30,51,37,Red,Onion,2,25,16,10-26-26
+27,53,64,Black,Sugarcane,37,0,0,Urea
+29,58,27,Sandy,Millets,2,25,11,10-26-26
+27,52,32,Sandy,Onion,30,40,47,28-28
+28,69,56,Loamy,Sugarcane,34,0,0,Ammonium Sulphate
+30,62,58,Loamy,Cotton,26,5,21,28-28
+27,48,42,Sandy,Barley,33,0,0,Ammonium Sulphate
+26,51,53,Loamy,Barley,6,10,15,SSP
+31,52,36,Red,Pulses,32,0,0,Ammonium Sulphate
+30,55,28,Red,Ground Nuts,45,0,0,Urea
+28,58,43,Loamy,Paddy,47,35,9,Urea
+27,61,29,Red,Barley,43,0,0,Urea
+34,70,56,Loamy,Chili,9,12,21,14-35-14
+24,68,52,Loamy,Onion,40,20,45,14-35-14
+25,67,46,Black,Paddy,30,14,12,28-28
+20,64,47,Clayey,Wheat,13,0,29,SSP
+23,64,39,Red,Tobacco,45,0,0,Urea
+32,50,56,Black,Sugarcane,30,14,26,28-28
+32,68,40,Sandy,Tomato,34,2,32,28-28
+32,47,29,Red,Pulses,41,0,0,Urea
+28,65,43,Loamy,Onion,14,18,13,17-17-17
+24,68,49,Loamy,Soybean,14,0,27,14-35-14
+33,63,38,Red,Sugarcane,40,0,0,Urea
+29,56,35,Red,Tobacco,30,0,0,Ammonium Sulphate
+33,55,40,Sandy,Ground Nuts,0,8,39,DAP
+28,42,48,Loamy,Pulses,5,0,36,DAP
+26,68,59,Loamy,Paddy,4,24,24,14-35-14
+22,48,32,Clayey,Pulses,0,3,33,DAP
+28,63,39,Sandy,Maize,21,5,23,28-28
+23,58,31,Red,Oil seeds,26,20,9,28-28
+26,68,52,Black,Soybean,35,0,0,Urea
+31,72,39,Clayey,Paddy,39,33,0,Urea
+24,74,40,Clayey,Paddy,31,1,7,Ammonium Sulphate
+27,56,43,Loamy,Ground Nuts,10,0,28,SSP
+32,50,54,Loamy,Maize,41,0,0,Urea
+33,67,48,Black,Sugarcane,44,0,0,Urea
+30,62,37,Sandy,Barley,13,6,13,17-17-17
+32,56,39,Red,Cotton,1,24,13,10-26-26
+29,58,29,Red,Tobacco,31,0,0,Ammonium Sulphate
+35,67,42,Clayey,Sugarcane,48,50,22,10-26-26
+29,54,39,Red,Maize,34,15,22,28-28
+35,70,25,Red,Chili,45,0,0,Urea
+35,69,41,Loamy,Cotton,8,2,7,20-20
+27,59,44,Loamy,Soybean,9,0,27,SSP
+34,63,32,Red,Oil seeds,17,1,24,28-28
+29,51,33,Clayey,Pulses,0,2,14,DAP
+24,65,32,Clayey,Soybean,4,0,25,SSP
+27,56,39,Red,Millets,14,19,10,17-17-17
+26,58,40,Red,Cotton,38,17,0,Ammonium Sulphate
+24,53,27,Red,Oil seeds,36,0,0,Urea
+24,65,27,Sandy,Barley,32,0,0,Ammonium Sulphate
+25,50,65,Black,Oil seeds,9,2,30,DAP
+35,61,27,Red,Chili,14,0,28,SSP
+34,54,62,Black,Oil seeds,28,11,26,28-28
+33,54,53,Loamy,Ground Nuts,0,32,46,DAP
+28,64,54,Loamy,Soybean,5,0,25,SSP
+22,64,58,Loamy,Wheat,18,14,7,28-28
+25,59,51,Black,Oil seeds,29,13,31,28-28
+33,59,50,Clayey,Sugarcane,42,0,0,Urea
+27,60,38,Red,Onion,9,0,43,DAP
+23,62,35,Red,Tobacco,32,56,24,28-28
+28,62,37,Clayey,Paddy,8,6,43,DAP
+25,60,50,Loamy,Barley,37,0,5,Urea
+23,74,25,Red,Chili,15,35,17,28-28
+32,63,53,Black,Maize,12,21,19,17-17-17
+34,60,50,Loamy,Chili,34,0,0,Ammonium Sulphate
+27,64,49,Clayey,Wheat,14,16,24,14-35-14
+22,62,38,Red,Tomato,38,9,50,14-35-14
+34,52,52,Black,Ground Nuts,0,14,47,DAP
+32,58,60,Loamy,Paddy,5,0,42,DAP
+32,43,40,Loamy,Millets,40,0,0,Urea
+23,59,37,Red,Onion,40,0,0,Urea
+36,68,45,Loamy,Cotton,44,14,11,28-28
+22,41,47,Clayey,Pulses,40,0,0,Urea
+20,79,37,Clayey,Potato,30,92,8,28-28
+23,59,33,Red,Chili,1,21,24,14-35-14
+27,54,55,Loamy,Onion,48,26,49,DAP
+32,50,64,Black,Oil seeds,25,0,14,28-28
+32,51,48,Loamy,Oil seeds,30,0,0,Ammonium Sulphate
+18,62,34,Clayey,Wheat,15,13,10,28-28
+29,52,27,Red,Maize,38,0,0,Urea
+32,59,40,Loamy,Millets,31,0,0,Ammonium Sulphate
+26,72,52,Black,Paddy,10,29,24,14-35-14
+20,47,39,Clayey,Wheat,32,20,39,28-28
+22,67,46,Clayey,Soybean,10,1,12,17-17-17
+26,65,50,Loamy,Barley,38,6,25,28-28
+27,56,51,Loamy,Millets,32,0,0,Ammonium Sulphate
+30,53,28,Red,Ground Nuts,11,0,39,DAP
+20,65,59,Loamy,Barley,2,9,25,14-35-14
+37,69,32,Clayey,Sugarcane,3,0,26,SSP
+25,74,33,Sandy,Tomato,45,0,0,Urea
+27,55,47,Loamy,Millets,37,0,0,Urea
+24,62,47,Black,Paddy,2,21,4,MOP
+25,50,42,Loamy,Barley,36,0,14,Urea
+23,64,46,Loamy,Barley,30,5,11,28-28
+22,64,52,Black,Soybean,3,10,1,MOP
+20,75,43,Clayey,Tomato,33,26,23,28-28
+17,64,49,Loamy,Potato,23,81,58,28-28
+32,71,34,Sandy,Tomato,12,2,50,DAP
+21,56,29,Red,Pulses,0,1,37,DAP
+30,60,41,Sandy,Tomato,34,0,0,Ammonium Sulphate
+28,60,39,Sandy,Maize,25,13,6,28-28
+33,65,51,Loamy,Ground Nuts,10,0,36,DAP
+19,71,38,Sandy,Potato,34,0,0,Ammonium Sulphate
+30,57,51,Loamy,Sugarcane,50,66,18,10-26-26
+32,55,36,Red,Pulses,40,0,0,Urea
+26,58,61,Black,Cotton,32,6,28,28-28
+26,58,32,Red,Millets,47,2,0,Urea
+24,62,41,Loamy,Paddy,40,0,0,Urea
+38,58,49,Loamy,Cotton,5,5,8,20-20
+30,53,37,Sandy,Millets,49,1,23,28-28
+31,63,49,Clayey,Soybean,0,0,36,DAP
+22,41,59,Loamy,Pulses,0,10,18,DAP
+25,56,32,Red,Tomato,41,0,0,Urea
+29,52,41,Sandy,Barley,11,8,10,17-17-17
+23,75,39,Red,Potato,48,10,48,Urea
+15,66,48,Loamy,Potato,35,80,12,10-26-26
+21,57,45,Clayey,Wheat,3,0,38,DAP
+21,57,55,Loamy,Tomato,39,0,48,SSP
+23,70,58,Loamy,Soybean,0,17,25,14-35-14
+21,44,28,Red,Pulses,11,0,31,DAP
+31,52,40,Red,Oil seeds,9,2,25,SSP
+25,57,42,Sandy,Tomato,11,30,20,14-35-14
+23,57,45,Sandy,Tobacco,35,24,15,28-28
+22,55,31,Red,Oil seeds,25,4,21,28-28
+27,69,55,Loamy,Cotton,44,0,0,Urea
+32,58,40,Sandy,Ground Nuts,13,0,28,14-35-14
+33,64,52,Black,Sugarcane,39,0,0,Urea
+28,70,44,Loamy,Maize,31,1,8,Ammonium Sulphate
+31,50,28,Sandy,Ground Nuts,2,0,44,DAP
+30,65,39,Red,Tobacco,11,0,35,DAP
+24,63,43,Loamy,Chili,11,0,42,DAP
+31,55,59,Loamy,Ground Nuts,34,0,0,Ammonium Sulphate
+34,60,33,Red,Ground Nuts,37,0,0,Urea
+26,52,48,Loamy,Onion,3,15,14,10-26-26
+32,70,48,Loamy,Paddy,4,18,15,10-26-26
+20,50,25,Red,Pulses,37,0,0,Urea
+28,50,44,Loamy,Onion,4,23,24,14-35-14
+22,57,34,Red,Chili,20,23,24,28-28
+20,62,45,Sandy,Onion,36,51,11,10-26-26
+23,53,47,Loamy,Maize,34,4,24,28-28
+21,80,44,Sandy,Potato,40,0,0,Urea
+33,70,59,Loamy,Sugarcane,3,0,31,DAP
+18,76,43,Loamy,Potato,7,0,43,DAP
+31,59,57,Black,Soybean,44,0,0,Urea
+31,43,27,Red,Millets,5,23,24,14-35-14
+27,65,41,Loamy,Wheat,7,0,28,SSP
+26,63,50,Loamy,Sugarcane,5,0,38,DAP
+30,59,63,Black,Sugarcane,43,73,0,MOP
+30,52,42,Sandy,Onion,14,0,24,14-35-14
+23,61,39,Sandy,Tobacco,1,0,35,DAP
+22,73,46,Loamy,Potato,33,89,47,28-28
+30,59,39,Red,Maize,41,0,3,Urea
+27,51,58,Black,Wheat,7,17,14,10-26-26
+29,42,44,Loamy,Millets,15,0,40,DAP
+28,64,50,Loamy,Tomato,7,51,32,DAP
+35,63,57,Loamy,Tobacco,4,11,11,DAP
+22,46,42,Clayey,Pulses,8,0,27,SSP
+27,52,50,Loamy,Barley,5,10,24,14-35-14
+22,74,27,Red,Chili,39,0,0,Urea
+30,65,39,Sandy,Tomato,42,0,0,Urea
+24,78,33,Red,Potato,6,0,45,DAP
+33,59,60,Loamy,Maize,31,0,0,Ammonium Sulphate
+29,53,39,Clayey,Millets,17,0,17,28-28
+18,61,26,Red,Onion,0,45,35,DAP
+24,60,45,Black,Wheat,22,9,48,28-28
+22,75,51,Loamy,Chili,2,9,2,MOP
+33,53,53,Loamy,Ground Nuts,1,10,15,14-35-14
+25,53,51,Loamy,Wheat,10,19,38,DAP
+31,70,47,Clayey,Maize,38,0,0,Urea
+32,56,65,Black,Ground Nuts,0,21,23,14-35-14
+33,56,50,Loamy,Ground Nuts,0,34,40,DAP
+23,57,55,Loamy,Maize,1,19,35,DAP
+25,62,60,Loamy,Tomato,0,10,5,10-26-26
+32,66,56,Black,Sugarcane,1,13,14,10-26-26
+22,54,35,Red,Onion,25,36,0,28-28
+15,68,52,Loamy,Potato,38,0,0,Urea
+32,52,37,Sandy,Millets,13,20,13,17-17-17
+26,52,40,Red,Ground Nuts,7,0,42,DAP
+30,55,27,Red,Tomato,8,0,32,DAP
+25,68,30,Sandy,Onion,36,3,42,SSP
+23,47,61,Black,Wheat,11,24,14,17-17-17
+28,48,29,Red,Barley,4,17,14,10-26-26
+26,73,35,Sandy,Chili,40,0,0,Urea
+31,55,30,Sandy,Chili,12,21,21,14-35-14
+23,64,44,Sandy,Potato,2,0,26,SSP
+34,61,34,Red,Tobacco,32,0,0,Ammonium Sulphate
+29,59,34,Red,Pulses,36,0,0,Urea
+28,61,50,Loamy,Paddy,39,0,0,Urea
+30,59,39,Sandy,Tobacco,8,8,26,14-35-14
+24,55,36,Clayey,Wheat,29,10,21,28-28
+29,52,33,Red,Tobacco,7,13,19,10-26-26
+35,52,50,Loamy,Millets,1,10,8,10-26-26
+31,52,50,Loamy,Tobacco,12,12,21,14-35-14
+21,67,52,Loamy,Onion,34,0,0,Ammonium Sulphate
+30,63,46,Black,Soybean,10,8,56,DAP
+32,69,58,Loamy,Cotton,48,18,14,28-28
+36,41,56,Loamy,Millets,30,0,0,Ammonium Sulphate
+25,60,29,Sandy,Maize,50,19,0,28-28
+17,61,57,Loamy,Potato,14,0,25,DAP
+33,61,65,Black,Sugarcane,45,33,39,Ammonium Sulphate
+31,63,56,Loamy,Oil seeds,3,0,28,SSP
+21,71,33,Sandy,Tomato,24,58,14,28-28
+26,67,25,Sandy,Paddy,24,16,50,28-28
+32,61,42,Sandy,Ground Nuts,32,0,0,Ammonium Sulphate
+22,62,44,Loamy,Wheat,7,0,30,DAP
+25,52,53,Loamy,Maize,6,20,6,MOP
+29,54,27,Red,Barley,39,0,0,Urea
+25,54,42,Loamy,Barley,39,0,0,Urea
+24,54,29,Red,Ground Nuts,0,21,26,14-35-14
+25,59,47,Black,Wheat,7,10,18,14-35-14
+29,54,54,Loamy,Tobacco,32,32,5,28-28
+21,55,27,Sandy,Onion,47,59,45,10-26-26
+26,71,36,Red,Chili,8,39,36,DAP
+24,69,49,Clayey,Paddy,11,12,17,17-17-17
+38,61,64,Black,Cotton,8,8,1,Urea
+23,56,25,Red,Maize,3,10,15,14-35-14
+22,59,46,Black,Oil seeds,29,11,12,28-28
+33,62,48,Loamy,Oil seeds,31,0,0,Ammonium Sulphate
+30,51,27,Sandy,Tobacco,4,3,11,DAP
+32,45,44,Loamy,Millets,13,0,33,DAP
+30,60,37,Red,Maize,3,16,23,14-35-14
+29,60,28,Red,Barley,36,1,17,Urea
+30,41,47,Loamy,Pulses,32,0,0,Ammonium Sulphate
+30,60,36,Red,Tobacco,18,13,39,28-28
+27,66,36,Clayey,Sugarcane,37,41,42,SSP
+34,48,25,Red,Oil seeds,1,12,28,14-35-14
+19,49,49,Black,Wheat,36,0,0,Urea
+26,59,25,Sandy,Barley,2,17,22,14-35-14
+26,65,53,Black,Wheat,39,17,49,SSP
+34,67,36,Sandy,Maize,33,16,17,28-28
+24,55,44,Sandy,Maize,3,2,17,SSP
+29,43,37,Clayey,Pulses,45,0,0,Urea
+28,55,50,Black,Paddy,10,0,28,SSP
+34,56,29,Red,Millets,32,0,0,Ammonium Sulphate
+38,69,64,Black,Sugarcane,23,16,6,28-28
+31,65,30,Red,Cotton,31,15,11,28-28
+26,53,30,Sandy,Tobacco,42,51,36,10-26-26
+32,67,36,Red,Tomato,37,51,47,10-26-26
+35,60,44,Loamy,Oil seeds,1,11,0,10-26-26
+29,56,43,Loamy,Chili,14,0,44,DAP
+22,80,41,Loamy,Potato,8,11,12,17-17-17
+29,49,56,Loamy,Barley,24,6,8,28-28
+30,64,37,Red,Onion,11,0,38,DAP
+31,62,44,Sandy,Maize,14,0,45,DAP
+32,48,31,Clayey,Pulses,0,8,22,14-35-14
+25,71,34,Red,Chili,11,7,23,14-35-14
+22,74,42,Sandy,Potato,49,34,70,DAP
+32,55,30,Red,Oil seeds,5,0,37,DAP
+32,67,52,Loamy,Maize,2,0,32,DAP
+34,54,33,Sandy,Maize,43,0,0,Urea
+29,58,35,Red,Millets,36,9,24,Urea
+28,58,52,Black,Millets,36,6,21,Urea
+27,60,35,Sandy,Barley,44,0,0,Urea
+27,67,44,Loamy,Cotton,10,5,26,14-35-14
+32,64,34,Clayey,Oil seeds,6,0,31,DAP
+32,61,35,Red,Chili,12,12,18,17-17-17
+29,57,51,Loamy,Maize,8,16,13,17-17-17
+22,68,34,Sandy,Chili,4,16,10,10-26-26
+29,59,29,Sandy,Ground Nuts,1,0,34,DAP
+20,58,37,Red,Barley,4,7,30,DAP
+32,64,37,Red,Tobacco,0,0,45,DAP
+30,67,61,Black,Soybean,5,5,34,DAP
+29,55,29,Red,Tomato,38,0,0,Urea
+32,60,38,Red,Ground Nuts,12,0,25,DAP
+32,45,40,Red,Millets,14,0,26,14-35-14
+37,70,59,Black,Cotton,38,0,0,Urea
+22,73,30,Red,Potato,25,2,16,28-28
+28,62,58,Loamy,Soybean,2,13,19,10-26-26
+33,60,53,Black,Oil seeds,28,11,1,28-28
+29,57,25,Red,Ground Nuts,2,12,13,10-26-26
+26,59,46,Black,Wheat,35,7,7,Ammonium Sulphate
+26,61,36,Sandy,Maize,27,4,15,28-28
+23,63,44,Loamy,Potato,35,29,40,SSP
+29,66,49,Clayey,Paddy,12,0,27,14-35-14
+28,64,36,Clayey,Paddy,27,37,38,28-28
+29,59,35,Red,Barley,10,0,45,DAP
+16,71,44,Sandy,Potato,39,0,0,Urea
+30,75,54,Loamy,Paddy,38,0,0,Urea
+28,62,39,Sandy,Wheat,26,1,12,Ammonium Sulphate
+18,68,40,Sandy,Onion,46,15,45,Ammonium Sulphate
+32,70,51,Black,Sugarcane,2,0,45,DAP
+26,49,45,Loamy,Oil seeds,23,0,36,28-28
+26,47,60,Loamy,Oil seeds,1,18,24,14-35-14
+28,55,42,Loamy,Tomato,5,35,18,10-26-26
+26,58,27,Red,Tobacco,46,4,1,Urea
+28,56,35,Red,Chili,36,0,0,Urea
+25,59,40,Clayey,Wheat,11,1,16,17-17-17
+31,59,58,Black,Paddy,32,0,0,Ammonium Sulphate
+26,56,41,Loamy,Pulses,42,0,0,Urea
+21,71,44,Loamy,Potato,28,5,62,28-28
+34,68,63,Black,Cotton,25,20,13,28-28
+34,53,40,Loamy,Millets,13,15,13,17-17-17
+34,63,55,Black,Maize,50,16,17,28-28
+28,48,35,Clayey,Pulses,0,0,35,DAP
+30,64,45,Sandy,Sugarcane,38,0,0,Urea
+27,50,43,Sandy,Ground Nuts,0,7,23,14-35-14
+23,51,45,Sandy,Onion,44,0,0,Urea
+34,55,26,Red,Millets,22,10,21,28-28
+24,51,29,Sandy,Tobacco,20,38,3,28-28
+20,52,45,Loamy,Wheat,44,0,0,Urea
+31,56,46,Clayey,Soybean,7,0,41,DAP
+19,53,54,Loamy,Wheat,10,15,25,14-35-14
+30,59,31,Clayey,Paddy,11,0,31,DAP
+36,51,45,Loamy,Sugarcane,10,21,22,14-35-14
+23,66,39,Red,Maize,8,20,22,14-35-14
+26,46,50,Clayey,Pulses,0,10,34,DAP
+31,59,51,Black,Paddy,18,13,3,28-28
+32,58,34,Red,Tobacco,1,58,33,DAP
+22,60,33,Sandy,Onion,17,51,6,28-28
+26,51,57,Loamy,Tobacco,16,34,34,28-28
+29,61,60,Black,Soybean,37,0,0,Urea
+21,61,56,Loamy,Tomato,25,50,21,28-28
+23,57,42,Sandy,Oil seeds,12,17,20,14-35-14
+38,61,36,Red,Cotton,43,18,14,28-28
+30,57,56,Loamy,Maize,35,11,4,Ammonium Sulphate
+26,57,49,Black,Oil seeds,40,0,0,Urea
+30,63,33,Sandy,Tomato,42,0,0,Urea
+28,57,35,Red,Chili,13,44,37,DAP
+27,67,43,Sandy,Tomato,30,49,15,28-28
+27,58,54,Loamy,Onion,30,0,0,Ammonium Sulphate
+24,69,35,Clayey,Onion,29,32,27,28-28
+28,47,36,Clayey,Millets,39,8,8,Ammonium Sulphate
+24,70,60,Loamy,Soybean,7,11,23,14-35-14
+23,61,42,Sandy,Maize,23,3,17,28-28
+23,50,29,Sandy,Maize,8,0,26,SSP
+25,53,39,Clayey,Wheat,16,7,7,28-28
+36,60,36,Clayey,Sugarcane,44,20,31,Ammonium Sulphate
+16,67,52,Loamy,Potato,14,0,28,14-35-14
+33,60,43,Loamy,Maize,12,0,42,DAP
+27,64,47,Loamy,Oil seeds,2,0,32,DAP
+26,64,52,Black,Wheat,10,0,37,DAP
+35,65,39,Clayey,Sugarcane,37,1,6,Ammonium Sulphate
+27,73,32,Clayey,Paddy,15,15,18,28-28
+29,67,38,Red,Cotton,49,10,21,Urea
+19,49,36,Sandy,Barley,19,5,29,28-28
+23,59,49,Clayey,Wheat,46,16,27,28-28
+30,68,48,Black,Soybean,10,18,22,14-35-14
+31,56,60,Loamy,Paddy,41,6,3,Urea
+27,65,51,Loamy,Onion,8,0,39,DAP
+30,58,65,Black,Cotton,45,0,0,Urea
+28,51,27,Sandy,Onion,13,52,8,MOP
+22,46,37,Clayey,Wheat,7,0,33,DAP
+30,47,51,Loamy,Barley,3,0,29,SSP
+25,61,46,Black,Cotton,20,9,16,28-28
+18,71,26,Sandy,Potato,13,0,35,DAP
+23,64,35,Sandy,Chili,45,2,17,Ammonium Sulphate
+36,57,46,Loamy,Millets,30,3,10,Ammonium Sulphate
+23,61,38,Red,Maize,12,11,10,17-17-17
+27,61,30,Red,Tomato,31,0,0,Ammonium Sulphate
+21,49,40,Loamy,Wheat,2,7,30,DAP
+30,60,34,Clayey,Ground Nuts,0,31,18,10-26-26
+19,63,30,Clayey,Wheat,19,18,43,28-28
+34,55,34,Sandy,Ground Nuts,0,30,8,MOP
+32,65,40,Loamy,Paddy,13,21,20,14-35-14
+25,62,32,Red,Paddy,7,0,25,SSP
+23,60,40,Sandy,Potato,50,96,61,MOP
+32,65,35,Sandy,Chili,33,0,0,Ammonium Sulphate
+31,70,35,Red,Soybean,12,0,35,DAP
+24,65,27,Red,Oil seeds,26,20,21,28-28
+28,54,54,Loamy,Onion,34,18,24,28-28
+24,52,49,Loamy,Wheat,42,18,23,28-28
+31,50,42,Sandy,Tobacco,42,0,0,Urea
+28,62,42,Clayey,Soybean,8,3,57,DAP
+26,46,36,Red,Barley,37,0,0,Urea
+27,67,33,Clayey,Paddy,36,15,37,14-35-14
+31,53,45,Loamy,Sugarcane,12,0,32,DAP
+27,55,36,Clayey,Paddy,25,21,17,28-28
+38,69,56,Black,Cotton,1,13,1,MOP
+25,50,54,Black,Sugarcane,38,77,6,10-26-26
+25,76,57,Loamy,Potato,43,40,62,SSP
+33,57,58,Loamy,Maize,45,0,0,Urea
+32,55,42,Clayey,Soybean,6,0,44,DAP
+25,63,39,Red,Ground Nuts,7,0,35,DAP
+30,53,42,Loamy,Maize,7,0,44,DAP
+29,56,36,Red,Tobacco,35,0,0,Urea
+23,48,26,Red,Pulses,0,9,24,14-35-14
+38,66,54,Loamy,Sugarcane,28,24,7,28-28
+26,63,28,Red,Tobacco,13,34,27,14-35-14
+32,59,46,Loamy,Paddy,9,0,37,DAP
+30,55,33,Red,Onion,50,44,15,Ammonium Sulphate
+33,64,49,Black,Sugarcane,9,20,25,14-35-14
+34,53,57,Loamy,Millets,6,0,28,SSP
+24,43,42,Loamy,Pulses,10,14,12,17-17-17
+24,63,37,Sandy,Potato,45,31,1,28-28
+26,58,42,Loamy,Wheat,9,18,23,14-35-14

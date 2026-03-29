@@ -190,4 +190,37 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Mobile logout link also triggers the confirmation dialog
+    const mobileLogoutLink = document.getElementById('mobileLogoutLink');
+    if (mobileLogoutLink && logoutOverlay) {
+        mobileLogoutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Close hamburger menu first
+            const hamburger = document.getElementById('hamburgerBtn');
+            const navLinksEl = document.getElementById('navLinks');
+            if (hamburger) hamburger.classList.remove('active');
+            if (navLinksEl) navLinksEl.classList.remove('open');
+            // Show confirmation
+            logoutOverlay.classList.add('active');
+        });
+    }
+    // --- Hamburger Menu Toggle ---
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const navLinks = document.getElementById('navLinks');
+
+    if (hamburgerBtn && navLinks) {
+        hamburgerBtn.addEventListener('click', () => {
+            hamburgerBtn.classList.toggle('active');
+            navLinks.classList.toggle('open');
+        });
+
+        // Close menu when a link is clicked
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburgerBtn.classList.remove('active');
+                navLinks.classList.remove('open');
+            });
+        });
+    }
 });

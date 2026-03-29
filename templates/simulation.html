@@ -1,0 +1,385 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container" style="max-width: 1000px; width: 100%;">
+    <div class="form-header">
+        <h2>📊 Crop Growth Simulator</h2>
+        <p>Adjust parameters and watch your crop grow over a simulated season. Plan your harvest with confidence.</p>
+    </div>
+
+    <div class="sim-layout">
+        <!-- Controls Panel -->
+        <div class="sim-controls">
+            <div class="form-group">
+                <label for="simCrop">Select Crop</label>
+                <select id="simCrop">
+                    <option value="rice">🌾 Rice (120 days)</option>
+                    <option value="wheat">🌿 Wheat (150 days)</option>
+                    <option value="maize">🌽 Maize (90 days)</option>
+                    <option value="cotton">🧶 Cotton (180 days)</option>
+                    <option value="sugarcane">🎋 Sugarcane (360 days)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="simSoil">Soil Type</label>
+                <select id="simSoil">
+                    <option value="loamy">Loamy (Best)</option>
+                    <option value="clay">Clay</option>
+                    <option value="sandy">Sandy</option>
+                    <option value="black">Black</option>
+                    <option value="red">Red</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="simRain">Rainfall <span id="rainVal" class="slider-val">150 mm</span></label>
+                <input type="range" id="simRain" min="20" max="400" value="150" class="sim-slider">
+            </div>
+
+            <div class="form-group">
+                <label for="simTemp">Temperature <span id="tempVal" class="slider-val">28°C</span></label>
+                <input type="range" id="simTemp" min="5" max="50" value="28" class="sim-slider">
+            </div>
+
+            <div class="form-group">
+                <label for="simIrrigation">Irrigation Level <span id="irrigVal" class="slider-val">Medium</span></label>
+                <input type="range" id="simIrrigation" min="0" max="2" value="1" step="1" class="sim-slider">
+            </div>
+
+            <button type="button" class="btn" id="runSimBtn" style="width: 100%; margin-top: 0.5rem;">
+                ▶ Run Simulation
+            </button>
+        </div>
+
+        <!-- Visualization Panel -->
+        <div class="sim-visual">
+            <!-- Canvas for growth chart -->
+            <div class="sim-chart-wrapper">
+                <canvas id="simCanvas" width="500" height="280"></canvas>
+            </div>
+
+            <!-- Growth Stage Display -->
+            <div class="sim-stage-bar" id="stageBar">
+                <div class="stage-item active" data-stage="0">
+                    <span class="stage-dot"></span>
+                    <span class="stage-label">Seed</span>
+                </div>
+                <div class="stage-connector"></div>
+                <div class="stage-item" data-stage="1">
+                    <span class="stage-dot"></span>
+                    <span class="stage-label">Sprout</span>
+                </div>
+                <div class="stage-connector"></div>
+                <div class="stage-item" data-stage="2">
+                    <span class="stage-dot"></span>
+                    <span class="stage-label">Vegetative</span>
+                </div>
+                <div class="stage-connector"></div>
+                <div class="stage-item" data-stage="3">
+                    <span class="stage-dot"></span>
+                    <span class="stage-label">Flowering</span>
+                </div>
+                <div class="stage-connector"></div>
+                <div class="stage-item" data-stage="4">
+                    <span class="stage-dot"></span>
+                    <span class="stage-label">Harvest</span>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="sim-stats" id="simStats">
+                <div class="sim-stat-card">
+                    <span class="stat-icon">📅</span>
+                    <span class="stat-value" id="statDays">--</span>
+                    <span class="stat-label">Days</span>
+                </div>
+                <div class="sim-stat-card">
+                    <span class="stat-icon">📈</span>
+                    <span class="stat-value" id="statYield">--</span>
+                    <span class="stat-label">Est. Yield</span>
+                </div>
+                <div class="sim-stat-card">
+                    <span class="stat-icon">💧</span>
+                    <span class="stat-value" id="statWater">--</span>
+                    <span class="stat-label">Water Need</span>
+                </div>
+                <div class="sim-stat-card">
+                    <span class="stat-icon">⚠️</span>
+                    <span class="stat-value" id="statRisk">--</span>
+                    <span class="stat-label">Risk Level</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        // Crop profiles
+        const CROPS = {
+            rice: { days: 120, optTemp: [22, 32], optRain: [150, 300], baseYield: 4.5, unit: 'tons/ha', emoji: '🌾' },
+            wheat: { days: 150, optTemp: [12, 25], optRain: [50, 150], baseYield: 3.5, unit: 'tons/ha', emoji: '🌿' },
+            maize: { days: 90, optTemp: [20, 30], optRain: [80, 200], baseYield: 5.0, unit: 'tons/ha', emoji: '🌽' },
+            cotton: { days: 180, optTemp: [25, 35], optRain: [60, 120], baseYield: 1.8, unit: 'tons/ha', emoji: '🧶' },
+            sugarcane: { days: 360, optTemp: [25, 38], optRain: [150, 300], baseYield: 70, unit: 'tons/ha', emoji: '🎋' }
+        };
+
+        const SOIL_FACTOR = { loamy: 1.0, clay: 0.85, sandy: 0.7, black: 0.9, red: 0.75 };
+        const IRRIG_LABELS = ['Low', 'Medium', 'High'];
+        const IRRIG_FACTOR = [0.7, 1.0, 1.2];
+
+        // Elements
+        const cropSel = document.getElementById('simCrop');
+        const soilSel = document.getElementById('simSoil');
+        const rainSlider = document.getElementById('simRain');
+        const tempSlider = document.getElementById('simTemp');
+        const irrigSlider = document.getElementById('simIrrigation');
+        const rainVal = document.getElementById('rainVal');
+        const tempVal = document.getElementById('tempVal');
+        const irrigVal = document.getElementById('irrigVal');
+        const runBtn = document.getElementById('runSimBtn');
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Update slider labels
+        rainSlider.addEventListener('input', () => rainVal.textContent = rainSlider.value + ' mm');
+        tempSlider.addEventListener('input', () => tempVal.textContent = tempSlider.value + '°C');
+        irrigSlider.addEventListener('input', () => irrigVal.textContent = IRRIG_LABELS[irrigSlider.value]);
+
+        // Resize canvas for crisp rendering
+        function resizeCanvas() {
+            const wrapper = canvas.parentElement;
+            const dpr = window.devicePixelRatio || 1;
+            const w = wrapper.clientWidth;
+            const h = 280;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
+            canvas.width = w * dpr;
+            canvas.height = h * dpr;
+            ctx.scale(dpr, dpr);
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Calculate growth curve
+        function computeGrowth(crop, soil, rain, temp, irrig) {
+            const profile = CROPS[crop];
+            const totalDays = profile.days;
+            const soilF = SOIL_FACTOR[soil];
+            const irrigF = IRRIG_FACTOR[irrig];
+
+            // Temperature fitness (0-1)
+            let tempF = 1;
+            if (temp < profile.optTemp[0]) tempF = Math.max(0.2, 1 - (profile.optTemp[0] - temp) * 0.04);
+            if (temp > profile.optTemp[1]) tempF = Math.max(0.2, 1 - (temp - profile.optTemp[1]) * 0.04);
+
+            // Rainfall fitness (0-1)
+            let rainF = 1;
+            if (rain < profile.optRain[0]) rainF = Math.max(0.3, rain / profile.optRain[0]);
+            if (rain > profile.optRain[1]) rainF = Math.max(0.4, 1 - (rain - profile.optRain[1]) * 0.002);
+
+            const overallFactor = soilF * irrigF * tempF * rainF;
+
+            // Generate daily growth curve (S-curve / logistic)
+            const points = [];
+            for (let d = 0; d <= totalDays; d++) {
+                const t = d / totalDays;
+                // Logistic curve: growth = 1 / (1 + e^(-12*(t-0.4)))
+                let growth = 1 / (1 + Math.exp(-12 * (t - 0.4)));
+                growth *= overallFactor;
+                // Add small noise for realism
+                growth += (Math.sin(d * 0.3) * 0.015);
+                growth = Math.max(0, Math.min(1, growth));
+                points.push({ day: d, growth: growth });
+            }
+
+            // Estimate yield
+            const estYield = (profile.baseYield * overallFactor).toFixed(1);
+
+            // Risk assessment
+            let risk = 'Low';
+            if (overallFactor < 0.5) risk = 'High';
+            else if (overallFactor < 0.75) risk = 'Medium';
+
+            // Water need
+            let waterNeed = 'Moderate';
+            if (rainF < 0.5 && irrig < 2) waterNeed = 'Critical';
+            else if (rainF < 0.75) waterNeed = 'High';
+            else if (rainF > 0.9 && irrig >= 1) waterNeed = 'Low';
+
+            return { points, totalDays, estYield, unit: profile.unit, risk, waterNeed, overallFactor };
+        }
+
+        // Animate chart drawing
+        let animId = null;
+        function drawChart(result) {
+            const pts = result.points;
+            const w = canvas.width / (window.devicePixelRatio || 1);
+            const h = canvas.height / (window.devicePixelRatio || 1);
+            const pad = { top: 30, right: 20, bottom: 40, left: 50 };
+            const chartW = w - pad.left - pad.right;
+            const chartH = h - pad.top - pad.bottom;
+
+            let frame = 0;
+            const totalFrames = pts.length;
+
+            if (animId) cancelAnimationFrame(animId);
+
+            function render() {
+                ctx.clearRect(0, 0, w, h);
+
+                // Background grid
+                ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+                ctx.lineWidth = 1;
+                for (let i = 0; i <= 4; i++) {
+                    const y = pad.top + (chartH / 4) * i;
+                    ctx.beginPath();
+                    ctx.moveTo(pad.left, y);
+                    ctx.lineTo(w - pad.right, y);
+                    ctx.stroke();
+                }
+
+                // Y-axis labels
+                ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                ctx.font = '11px Inter, sans-serif';
+                ctx.textAlign = 'right';
+                for (let i = 0; i <= 4; i++) {
+                    const y = pad.top + (chartH / 4) * i;
+                    ctx.fillText((100 - i * 25) + '%', pad.left - 8, y + 4);
+                }
+
+                // X-axis labels
+                ctx.textAlign = 'center';
+                const days = result.totalDays;
+                const xSteps = Math.min(6, days);
+                for (let i = 0; i <= xSteps; i++) {
+                    const d = Math.round((days / xSteps) * i);
+                    const x = pad.left + (d / days) * chartW;
+                    ctx.fillText('Day ' + d, x, h - pad.bottom + 20);
+                }
+
+                // Axis labels
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.font = '12px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Growth Progress Over Time', w / 2, 18);
+
+                // Draw gradient fill
+                const drawLen = Math.min(frame, totalFrames);
+                if (drawLen > 1) {
+                    const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + chartH);
+                    grad.addColorStop(0, 'rgba(46, 204, 113, 0.35)');
+                    grad.addColorStop(1, 'rgba(46, 204, 113, 0.02)');
+
+                    ctx.beginPath();
+                    ctx.moveTo(pad.left, pad.top + chartH);
+                    for (let i = 0; i < drawLen; i++) {
+                        const x = pad.left + (pts[i].day / days) * chartW;
+                        const y = pad.top + chartH - pts[i].growth * chartH;
+                        ctx.lineTo(x, y);
+                    }
+                    const lastX = pad.left + (pts[drawLen - 1].day / days) * chartW;
+                    ctx.lineTo(lastX, pad.top + chartH);
+                    ctx.closePath();
+                    ctx.fillStyle = grad;
+                    ctx.fill();
+
+                    // Draw line
+                    ctx.beginPath();
+                    for (let i = 0; i < drawLen; i++) {
+                        const x = pad.left + (pts[i].day / days) * chartW;
+                        const y = pad.top + chartH - pts[i].growth * chartH;
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.strokeStyle = '#2ecc71';
+                    ctx.lineWidth = 2.5;
+                    ctx.stroke();
+
+                    // Glow dot at tip
+                    const tipX = pad.left + (pts[drawLen - 1].day / days) * chartW;
+                    const tipY = pad.top + chartH - pts[drawLen - 1].growth * chartH;
+                    ctx.beginPath();
+                    ctx.arc(tipX, tipY, 5, 0, Math.PI * 2);
+                    ctx.fillStyle = '#2ecc71';
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(tipX, tipY, 10, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(46, 204, 113, 0.2)';
+                    ctx.fill();
+                }
+
+                // Update stage bar
+                const progress = drawLen / totalFrames;
+                updateStages(progress);
+
+                frame += 2; // Speed
+                if (frame <= totalFrames + 2) {
+                    animId = requestAnimationFrame(render);
+                }
+            }
+            render();
+        }
+
+        // Update stage indicators
+        function updateStages(progress) {
+            const stageThresholds = [0, 0.1, 0.3, 0.6, 0.9];
+            const items = document.querySelectorAll('.stage-item');
+            const connectors = document.querySelectorAll('.stage-connector');
+
+            items.forEach((item, i) => {
+                if (progress >= stageThresholds[i]) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            connectors.forEach((conn, i) => {
+                if (progress >= stageThresholds[i + 1]) {
+                    conn.classList.add('active');
+                } else {
+                    conn.classList.remove('active');
+                }
+            });
+        }
+
+        // Run simulation
+        runBtn.addEventListener('click', () => {
+            const crop = cropSel.value;
+            const soil = soilSel.value;
+            const rain = parseInt(rainSlider.value);
+            const temp = parseInt(tempSlider.value);
+            const irrig = parseInt(irrigSlider.value);
+
+            runBtn.disabled = true;
+            runBtn.textContent = '⏳ Simulating...';
+
+            const result = computeGrowth(crop, soil, rain, temp, irrig);
+
+            // Update stats
+            document.getElementById('statDays').textContent = result.totalDays;
+            document.getElementById('statYield').textContent = result.estYield + ' ' + result.unit;
+            document.getElementById('statWater').textContent = result.waterNeed;
+            document.getElementById('statRisk').textContent = result.risk;
+
+            // Color risk
+            const riskEl = document.getElementById('statRisk');
+            riskEl.style.color = result.risk === 'Low' ? '#2ecc71' : result.risk === 'Medium' ? '#f1c40f' : '#e74c3c';
+
+            // Color water
+            const waterEl = document.getElementById('statWater');
+            waterEl.style.color = result.waterNeed === 'Low' ? '#2ecc71' : result.waterNeed === 'Moderate' ? '#3498db' : result.waterNeed === 'High' ? '#f1c40f' : '#e74c3c';
+
+            // Draw chart with animation
+            drawChart(result);
+
+            setTimeout(() => {
+                runBtn.disabled = false;
+                runBtn.textContent = '▶ Run Simulation';
+            }, 2000);
+        });
+    })();
+</script>
+{% endblock %}

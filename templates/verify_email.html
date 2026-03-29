@@ -9,16 +9,7 @@
             <p>We've sent a verification code to <strong>{{ email }}</strong></p>
         </div>
 
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">
-            {{ message }}
-        </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
+
 
         <!-- Email Status -->
         <div id="emailStatus" class="email-status">
@@ -32,12 +23,18 @@
             <div class="form-group">
                 <label for="otp0">Verification Code</label>
                 <div class="otp-inputs" id="otpInputs">
-                    <input type="text" maxlength="1" id="otp0" class="otp-input" data-index="0" autocomplete="off">
-                    <input type="text" maxlength="1" class="otp-input" data-index="1" autocomplete="off">
-                    <input type="text" maxlength="1" class="otp-input" data-index="2" autocomplete="off">
-                    <input type="text" maxlength="1" class="otp-input" data-index="3" autocomplete="off">
-                    <input type="text" maxlength="1" class="otp-input" data-index="4" autocomplete="off">
-                    <input type="text" maxlength="1" class="otp-input" data-index="5" autocomplete="off">
+                    <input type="text" maxlength="1" id="otp0" class="otp-input" data-index="0" autocomplete="off"
+                        aria-label="Verification code digit 1">
+                    <input type="text" maxlength="1" id="otp1" class="otp-input" data-index="1" autocomplete="off"
+                        aria-label="Verification code digit 2">
+                    <input type="text" maxlength="1" id="otp2" class="otp-input" data-index="2" autocomplete="off"
+                        aria-label="Verification code digit 3">
+                    <input type="text" maxlength="1" id="otp3" class="otp-input" data-index="3" autocomplete="off"
+                        aria-label="Verification code digit 4">
+                    <input type="text" maxlength="1" id="otp4" class="otp-input" data-index="4" autocomplete="off"
+                        aria-label="Verification code digit 5">
+                    <input type="text" maxlength="1" id="otp5" class="otp-input" data-index="5" autocomplete="off"
+                        aria-label="Verification code digit 6">
                 </div>
                 <input type="hidden" name="code" id="fullCode">
             </div>
