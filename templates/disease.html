@@ -12,8 +12,10 @@
             style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; cursor: pointer;">
             <input type="file" name="file" id="fileInput" accept="image/*" required>
             <span id="uploadIcon" style="font-size: 4rem; margin-bottom: 1rem; transition: transform 0.3s;">📷</span>
-            <p id="uploadText" style="color: var(--text-muted); text-align: center;">Click or Drag & Drop<br>an image
-                here to upload</p>
+            <p id="uploadText" style="color: var(--text-muted); text-align: center;">
+                <span>Click or Drag & Drop</span><br>
+                <span>an image here to upload</span>
+            </p>
 
             <!-- Image Preview -->
             <img id="imagePreview" src="" alt="Preview"
@@ -22,10 +24,10 @@
 
         <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px; margin-top: 1.5rem;">
             <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">
-                <strong style="color: var(--primary);">💡 Tips for best results:</strong><br>
-                • Use natural lighting for clearer colors<br>
-                • Focus on a single leaf with visible symptoms<br>
-                • Avoid blurry or dark images
+                <strong style="color: var(--primary);"><span>💡</span> <span>Tips for best results:</span></strong><br>
+                <span>• Use natural lighting for clearer colors</span><br>
+                <span>• Focus on a single leaf with visible symptoms</span><br>
+                <span>• Avoid blurry or dark images</span>
             </p>
         </div>
 
@@ -36,6 +38,9 @@
 </div>
 
 <script>
+    // Language helper
+    function _dLang() { return localStorage.getItem('smartfarming_lang') || 'en'; }
+
     // Image Preview Logic
     const fileInput = document.getElementById('fileInput');
     const imagePreview = document.getElementById('imagePreview');
@@ -50,7 +55,10 @@
                 imagePreview.src = event.target.result;
                 imagePreview.style.display = 'block';
                 uploadIcon.style.display = 'none';
-                uploadText.innerHTML = '<span style="color: #2ecc71;">✓ Image selected. Click Analyze!</span>';
+                const msg = _dLang() === 'ta'
+                    ? '✓ படம் தேர்ந்தெடுக்கப்பட்டது. ஆய்வு செய் கிளிக் செய்யவும்!'
+                    : '✓ Image selected. Click Analyze!';
+                uploadText.innerHTML = `<span style="color: #2ecc71;">${msg}</span>`;
             };
             reader.readAsDataURL(file);
         }
@@ -63,13 +71,21 @@
         dropZone.style.borderColor = '#2ecc71';
         dropZone.style.background = 'rgba(46, 204, 113, 0.1)';
     });
-    dropZone.addEventListener('dragleave', () => {
+    dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
         dropZone.style.borderColor = '';
         dropZone.style.background = '';
     });
     dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
         dropZone.style.borderColor = '';
         dropZone.style.background = '';
+
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            const event = new Event('change');
+            fileInput.dispatchEvent(event);
+        }
     });
 </script>
 {% endblock %}

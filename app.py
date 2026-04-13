@@ -1,6 +1,5 @@
 import os
 import random
-import time
 from datetime import datetime, timedelta, timezone
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
 from werkzeug.utils import secure_filename
@@ -11,7 +10,6 @@ from sklearn.ensemble import RandomForestClassifier
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
@@ -29,7 +27,6 @@ login_manager.login_message_category = 'info'
 
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
 
 # --- User Model ---
 class User(db.Model, UserMixin):
@@ -61,11 +58,9 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'<User {self.username}>'
 
-
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
-
 
 # Create database tables
 with app.app_context():
@@ -87,19 +82,18 @@ try:
     X_disease = disease_df[disease_feature_cols]
     y_disease = disease_df['label']
     
-    # Build treatment & severity lookup from dataset
+    # Build treatment lookup from dataset
     disease_treatment_map = disease_df.groupby('label')['treatment'].first().to_dict()
     
-    # Train model
-    disease_model = RandomForestClassifier(n_estimators=50, random_state=42)
+    # Train RandomForest model
+    disease_model = RandomForestClassifier(n_estimators=100, random_state=42)
     disease_model.fit(X_disease, y_disease)
-    print("✅ Disease Detection Model trained successfully on data/Disease_Detection.csv")
+    print(f"Disease Detection Model trained successfully on {len(disease_df)} samples")
     
 except Exception as e:
-    print(f"⚠️ Failed to load disease model: {e}")
+    print(f"Warning: Failed to load disease model: {e}")
     disease_model = None
     disease_treatment_map = {}
-
 
 def extract_image_features(image_path):
     """Extract 14 color & texture features from a leaf image for ML prediction."""
@@ -177,11 +171,21 @@ def extract_image_features(image_path):
         round(brightness, 4), round(saturation, 4)
     ]
 
-
 def predict_disease_logic(image_path):
-    """Predict plant disease using the trained ML model on extracted image features."""
+    """Predict plant disease using the trained RandomForest model on extracted image features."""
     try:
         features = extract_image_features(image_path)
+        
+        # Check if the image contains enough plant matter (leaf)
+        green_ratio = features[6]
+        disease_ratio = features[7]
+        brown_ratio = features[8]
+        yellow_ratio = features[9]
+        
+        plant_matter_ratio = green_ratio + disease_ratio + brown_ratio + yellow_ratio
+        
+        if plant_matter_ratio < 0.05:
+            return "<strong style='font-size:1.2rem; color:#e74c3c;'>No Leaf Detected!</strong><br><br><span style='font-size:0.9rem; color:#bdc3c7'>Please upload a clear, focused image of a plant leaf. We could not detect enough plant matter in this photo.</span>"
         
         if disease_model:
             # Get probabilities for all classes
@@ -199,7 +203,7 @@ def predict_disease_logic(image_path):
             
             # Determine severity from features
             dr = features[7]  # disease_ratio
-            if top_disease == "Healthy":
+            if "healthy" in top_disease.lower():
                 severity = "None"
                 severity_color = "#2ecc71"
             elif dr < 0.20:
@@ -215,50 +219,29 @@ def predict_disease_logic(image_path):
             # Build result string
             result = f"<strong style='font-size:1.2rem;'>{top_disease}</strong>"
             
-            if top_disease != "Healthy":
+            if "healthy" not in top_disease.lower():
                 result += f"<br><span style='color:{severity_color}; font-weight:bold;'>Severity: {severity}</span>"
             
-            result += f"<br><span style='font-size:0.9rem; color:#bdc3c7'>Confidence: {top_confidence:.1f}%</span>"
+            
             
             # Show runner-up if close
             if len(class_probs) > 1 and class_probs[1][1] > 0.10:
-                result += f"<br><span style='font-size:0.8rem; color:#95a5a6'>Also possible: {class_probs[1][0]} ({class_probs[1][1]*100:.0f}%)</span>"
+               
             
             # Treatment
-            result += f"<br><br><span style='font-size:0.85rem; color:#3498db'>💊 <strong>Treatment:</strong></span>"
-            result += f"<br><span style='font-size:0.8rem; color:#bdc3c7'>{treatment}</span>"
+                result += f"<br><br><span style='font-size:0.85rem; color:#3498db'>💊 <strong>Treatment:</strong></span>"
+                result += f"<br><span style='font-size:0.8rem; color:#bdc3c7'>{treatment}</span>"
             
-            result += f"<br><br><span style='font-size:0.7rem; color:#7f8c8d'>🤖 Predicted by ML Model (RandomForest trained on 1,610 samples)</span>"
+                result += f"<br><br><span style='font-size:0.7rem; color:#7f8c8d'>🤖 Predicted by RandomForest model trained on {len(disease_df)} samples</span>"
             
             return result
         else:
-            # Fallback to basic heuristic if model failed to load
-            img = Image.open(image_path).convert('RGB')
-            img = img.resize((256, 256))
-            img_array = np.array(img)
-            
-            green_ratio = features[6]
-            disease_ratio = features[7]
-            
-            if green_ratio > 0.35:
-                prediction = "Healthy (No obvious symptoms)"
-                confidence = f"{min(green_ratio * 100 + 40, 99):.1f}%"
-            elif disease_ratio > 0.15:
-                prediction = "Possible Disease Detected"
-                confidence = f"{min(disease_ratio * 100 + 50, 98):.1f}%"
-            else:
-                prediction = "Unknown / Low Leaf Content Detected"
-                confidence = "LOW"
-            
-            return f"{prediction} <br><span style='font-size:0.8rem; color:#bdc3c7'>Confidence: {confidence} (Heuristic fallback - model not loaded)</span>"
+            return "Disease detection model not available. Please check server logs."
         
     except Exception as e:
         print(f"Error processing image: {e}")
         return "Error analyzing image"
 
-# --- Routes ---
-
-# Authentication Routes
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -310,7 +293,6 @@ def register():
     
     return render_template('register.html')
 
-
 @app.route('/verify-email', methods=['GET', 'POST'])
 def verify_email():
     email = session.get('pending_verification_email')
@@ -345,7 +327,6 @@ def verify_email():
     
     return render_template('verify_email.html', email=email, verification_code=session.get('verification_code'))
 
-
 @app.route('/resend-code', methods=['POST'])
 def resend_code():
     email = session.get('pending_verification_email')
@@ -367,7 +348,6 @@ def resend_code():
     session['verification_code'] = new_code
     
     return jsonify({'success': True, 'code': new_code, 'message': 'New verification code generated'})
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -404,7 +384,6 @@ def login():
     
     return render_template('login.html')
 
-
 @app.route('/logout')
 @login_required
 def logout():
@@ -412,8 +391,6 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('home'))
 
-
-# Main Routes
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -451,33 +428,36 @@ def predict_disease():
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
-        
-        # Simulate processing time
-        time.sleep(1.5) 
-        
+
         prediction = predict_disease_logic(filepath)
         return jsonify({'success': True, 'prediction': prediction, 'image_path': filename})
 
-
-
-# --- Load Data & Train Model on Startup ---
+# --- Load Data & Train Crop Model on Startup ---
 try:
-    # Load the "Kaggle" dataset (Mock version created locally)
     df = pd.read_csv('data/Crop_Recommendation.csv')
+    print(f"Crop Data loaded with {len(df)} samples")
     
-    # Prepare features and labels
-    X = df[['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall']]
-    y = df['label']
-    
-    # Train the model
-    # optimizing for generalizability on small data
-    crop_model = RandomForestClassifier(n_estimators=20, random_state=42) 
-    crop_model.fit(X, y)
-    print("✅ Model trained successfully on data/Crop_Recommendation.csv")
+    # Train Random Forest
+    from sklearn.preprocessing import LabelEncoder
+    soil_encoder = LabelEncoder()
+    season_encoder = LabelEncoder()
+    water_encoder = LabelEncoder()
+
+    df['soil_encoded'] = soil_encoder.fit_transform(df['soil_type'])
+    df['season_encoded'] = season_encoder.fit_transform(df['season'])
+    df['water_encoded'] = water_encoder.fit_transform(df['water'])
+
+    X_crop = df[['soil_encoded', 'season_encoded', 'water_encoded', 'temperature', 'humidity']]
+    y_crop = df['label']
+
+    crop_rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+    crop_rf_model.fit(X_crop, y_crop)
+    print("Crop Random Forest Model trained successfully")
     
 except Exception as e:
-    print(f"⚠️ Failed to load dataset/train model: {e}")
-    crop_model = None
+    print(f"Warning: Failed to load dataset or train crop model: {e}")
+    df = None
+    crop_rf_model = None
 
 @app.route('/api/predict-crop-simplified', methods=['POST'])
 def predict_crop_simplified():
@@ -487,204 +467,150 @@ def predict_crop_simplified():
         season = data.get('season')
         water = data.get('water')
 
-        # Heuristic Mapping: Soil Type -> Avg Nutrient Content
-        # (These are estimations based on general agricultural science)
-        # We need these to convert user's "Clay Soil" selection into N, P, K numbers the model understands.
-        soil_profile = {
-            'clay': {'N': 90, 'P': 55, 'K': 40, 'ph': 5.8}, # Good for Rice
-            'sandy': {'N': 20, 'P': 40, 'K': 50, 'ph': 5.5}, # Watermelon / Maize
-            'loamy': {'N': 100, 'P': 40, 'K': 190, 'ph': 6.5}, # Grapes / cotton
-            'black': {'N': 110, 'P': 50, 'K': 50, 'ph': 7.0}, # Cotton
-            'red': {'N': 50, 'P': 50, 'K': 50, 'ph': 6.0} 
-        }
 
-        # Heuristic Mapping: Season -> Avg Weather
+        # Season -> average weather fallback (aligned with new CSV data)
         season_profile = {
-            'summer': {'temp': 30, 'humidity': 50, 'rain': 100},
-            'winter': {'temp': 18, 'humidity': 20, 'rain': 50},
-            'monsoon': {'temp': 25, 'humidity': 80, 'rain': 250},
-            'autumn': {'temp': 24, 'humidity': 60, 'rain': 100}
+            'summer':  {'temp': 32, 'humidity': 45},
+            'winter':  {'temp': 18, 'humidity': 25},
+            'monsoon': {'temp': 26, 'humidity': 85},
+            'autumn':  {'temp': 24, 'humidity': 60}
         }
 
-        profile = soil_profile.get(soil_type, soil_profile['loamy'])
-        
-        # Check if real-time data is provided
+
+        # Check if real-time weather data was provided from geolocation
         real_temp = data.get('real_temp')
         real_humidity = data.get('real_humidity')
-        
-        if real_temp is not None and real_humidity is not None:
-            # Use Real-time data
+        location_name = data.get('location_name', '')
+        using_realtime = False
+
+        if real_temp is not None and real_humidity is not None and str(real_temp).strip() != '':
             try:
                 weather = {
                     'temp': float(real_temp),
-                    'humidity': float(real_humidity),
-                    'rain': 100 # Default moderate rain if unknown, or infer from water availability
+                    'humidity': float(real_humidity)
                 }
+                using_realtime = True
             except (TypeError, ValueError):
                 weather = season_profile.get(season, season_profile['autumn'])
         else:
-            # Fallback to Season selection
             weather = season_profile.get(season, season_profile['autumn'])
-        
-        # Adjust rainfall based on water availability input
-        if water == 'low': weather['rain'] -= 40
-        if water == 'high': weather['rain'] += 80
-        weather['rain'] = max(10, weather['rain']) # Prevent negative rain
 
-        # Prediction Logic
-        if crop_model:
-            # Use the trained Machine Learning Model
-            input_data = [[
-                profile['N'], 
-                profile['P'], 
-                profile['K'],
-                weather['temp'], 
-                weather['humidity'], 
-                profile['ph'], 
-                weather['rain']
-            ]]
+
+        # Prediction (using Random Forest)
+        if crop_rf_model is not None:
+            try:
+                soil_encoded_val = soil_encoder.transform([soil_type])[0]
+            except Exception:
+                soil_encoded_val = 0
+                
+            try:
+                season_encoded_val = season_encoder.transform([season])[0]
+            except Exception:
+                season_encoded_val = 0
+                
+            try:
+                water_encoded_val = water_encoder.transform([water])[0]
+            except Exception:
+                water_encoded_val = 0
+                
+            X_input = pd.DataFrame([[soil_encoded_val, season_encoded_val, water_encoded_val, weather['temp'], weather['humidity']]], columns=['soil_encoded', 'season_encoded', 'water_encoded', 'temperature', 'humidity'])
             
-            # Get probabilities for all classes
-            probs = crop_model.predict_proba(input_data)[0]
-            classes = crop_model.classes_
+            # Get top 3 predictions
+            probs = crop_rf_model.predict_proba(X_input)[0]
+            classes = crop_rf_model.classes_
+            top3_idx = np.argsort(probs)[-3:][::-1]
+            top_crops = [classes[i] for i in top3_idx]
             
-            # Create a list of (crop, probability) tuples
-            class_probs = list(zip(classes, probs))
-            
-            # Sort by probability (highest first)
-            class_probs.sort(key=lambda x: x[1], reverse=True)
-            
-            # Get Top 3 crops with > 10% confidence
-            top_crops = [
-                f"{c[0]} ({c[1]*100:.0f}%)" 
-                for c in class_probs[:3] 
-                if c[1] > 0.1
-            ]
-            
-            if not top_crops:
-                prediction = "No specific crop recommended (Low confidence)"
-            else:
-                prediction = "<br>".join(top_crops)
-            
+            prediction_list = [f"{str(c).capitalize()}" for c in top_crops]
+            prediction = "<br>".join(prediction_list)
+            prediction += "<br><span style='font-size:0.7rem; color:#7f8c8d'>🤖 Predicted by RandomForest model</span>"
         else:
-            prediction = "Model not loaded"
+            prediction = "Crop model not available. Please check server logs."
 
-        return jsonify({'success': True, 'prediction': prediction})
+        # Build response with weather context
+        response = {'success': True, 'prediction': prediction}
+        response['weather_used'] = {
+            'temperature': round(weather['temp'], 1),
+            'humidity': round(weather['humidity'], 1),
+            'source': 'realtime' if using_realtime else 'season_estimate'
+        }
+        if location_name:
+            response['location'] = location_name
+
+        return jsonify(response)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
-# --- Load Fertilizer Data & Train Model ---
+# --- Load Fertilizer Data ---
 try:
     fert_df = pd.read_csv('data/Fertilizer_Recommendation.csv')
-    
-    # New Kaggle Dataset Format
-    # Temparature,Humidity ,Moisture,Soil Type,Crop Type,Nitrogen,Potassium,Phosphorous,Fertilizer Name
-    soil_factors = pd.factorize(fert_df['Soil Type'])
-    crop_factors = pd.factorize(fert_df['Crop Type'])
-    label_factors = pd.factorize(fert_df['Fertilizer Name'])
-
-    fert_df['Soil_Code'] = soil_factors[0]
-    fert_df['Crop_Code'] = crop_factors[0]
-    fert_df['Label_Code'] = label_factors[0]
-
-    # Features and Target
-    X_fert = fert_df[['Temparature', 'Humidity ', 'Moisture', 'Soil_Code', 'Crop_Code', 'Nitrogen', 'Potassium', 'Phosphorous']]
-    y_fert = fert_df['Label_Code']
-
-    # Train Model
-    fert_model = RandomForestClassifier(n_estimators=20, random_state=42)
-    fert_model.fit(X_fert, y_fert)
-    print("✅ Fertilizer Model trained successfully on Kaggle data.")
-
-    # Save encoders for reference
-    crop_encoder = {name.lower() if isinstance(name, str) else name: i for i, name in enumerate(crop_factors[1])}
-    soil_encoder = {name.lower() if isinstance(name, str) else name: i for i, name in enumerate(soil_factors[1])}
-    label_decoder = {i: name for i, name in enumerate(label_factors[1])}
-
+    print(f"Fertilizer Data loaded with {len(fert_df)} samples.")
 except Exception as e:
-    print(f"⚠️ Failed to load fertilizer model: {e}")
-    fert_model = None
-    crop_encoder = {}
-    soil_encoder = {}
-    label_decoder = {}
+    print(f"Warning: Failed to load fertilizer data: {e}")
+    fert_df = None
 
 @app.route('/api/predict-fertilizer-simplified', methods=['POST'])
 def predict_fertilizer_simplified():
     try:
         data = request.json
-        symptoms_input = data.get('symptoms', 'healthy')
-        crop_input = data.get('crop_type', '')
-        soil_input = data.get('soil_type', '')
+        symptoms_input = str(data.get('symptoms', 'healthy')).strip().lower()
+        crop_input = str(data.get('crop_type', '')).strip().lower()
+        soil_input = str(data.get('soil_type', '')).strip().lower()
 
-        if fert_model:
-            # 1. Best Effort Matching: Convert User Input to Model Codes
-            crop_map_key = next((k for k in crop_encoder.keys() if crop_input.lower() in str(k)), list(crop_encoder.keys())[0])
-            crop_code = crop_encoder[crop_map_key]
-            
-            soil_map_key = next((k for k in soil_encoder.keys() if soil_input.lower() in str(k)), list(soil_encoder.keys())[0])
-            soil_code = soil_encoder[soil_map_key]
-            
-            # Heuristic Mapping: Soil Type -> Avg Nutrient Content
-            soil_profile = {
-                'clay': {'N': 90, 'P': 55, 'K': 40, 'moisture': 70}, 
-                'sandy': {'N': 20, 'P': 40, 'K': 50, 'moisture': 30}, 
-                'loamy': {'N': 100, 'P': 40, 'K': 190, 'moisture': 50}, 
-                'black': {'N': 110, 'P': 50, 'K': 50, 'moisture': 60}, 
-                'red': {'N': 50, 'P': 50, 'K': 50, 'moisture': 40} 
-            }
-            profile = soil_profile.get(soil_input.lower(), soil_profile['loamy'])
+        recommended_fertilizer = None
 
-            # Modify profile based on symptoms heuristic
-            N_val = profile['N']
-            P_val = profile['P']
-            K_val = profile['K']
-            
-            if symptoms_input == 'yellow_leaves': N_val = max(10, N_val - 30) # Nitrogen deficiency
-            elif symptoms_input == 'stunted': P_val = max(5, P_val - 20) # Phosphorous deficiency
-            elif symptoms_input == 'burnt_edges': K_val = max(10, K_val - 30) # Potassium deficiency
+        # Load fresh data to ensure new additions are included immediately
+        current_fert_df = pd.read_csv('data/Fertilizer_Recommendation.csv')
+        
+        if current_fert_df is not None:
+            # Match case-insensitively and stripped from the CSV
+            temp_df = current_fert_df.copy()
+            temp_df['crop_type'] = temp_df['crop_type'].str.strip().str.lower()
+            temp_df['soil_type'] = temp_df['soil_type'].str.strip().str.lower()
+            temp_df['symptoms'] = temp_df['symptoms'].str.strip().str.lower()
 
-            # Default average temp and humidity
-            temp_val = 28
-            humidity_val = 60
-            moist_val = profile['moisture']
+            match = temp_df[
+                (temp_df['crop_type'] == crop_input) & 
+                (temp_df['soil_type'] == soil_input) & 
+                (temp_df['symptoms'] == symptoms_input)
+            ]
+            
+            if not match.empty:
+                recommended_fertilizer = match['fertilizer_name'].iloc[0]
 
-            # 2. Predict using ['Temparature', 'Humidity ', 'Moisture', 'Soil_Code', 'Crop_Code', 'Nitrogen', 'Potassium', 'Phosphorous']
-            input_features = [[temp_val, humidity_val, moist_val, soil_code, crop_code, N_val, K_val, P_val]]
-            pred_code = fert_model.predict(input_features)[0]
-            base_recommendation = label_decoder[pred_code]
-            
-            # 3. Calculate Quantity based on Land Size
-            land_size = float(data.get('land_size', 1))
-            land_unit = data.get('land_unit', 'acres')
-            
-            if land_unit == 'hectares':
-                land_size = land_size * 2.47
-            elif land_unit == 'sq_meter':
-                land_size = land_size / 4046.86
-                
-            dosage_rate = 50 
-            if 'Urea' in base_recommendation: dosage_rate = 45
-            elif 'DAP' in base_recommendation: dosage_rate = 35
-            elif 'MOP' in base_recommendation: dosage_rate = 25
-            elif 'NPK' in base_recommendation: dosage_rate = 60
-            elif '14-35-14' in base_recommendation: dosage_rate = 55
-            elif '10-26-26' in base_recommendation: dosage_rate = 50
-            
-            total_qty = dosage_rate * land_size
-            
-            qty_str = f"{total_qty:.1f} kg"
-            if total_qty > 1000:
-                qty_str = f"{total_qty/1000:.2f} Tonnes"
+        if recommended_fertilizer is None:
+            return jsonify({'success': True, 'prediction': "No exact fertilizer recommendation found for these conditions."})
 
-            recommendation = f"{base_recommendation}<br>"
-            recommendation += f"<span style='font-size:1rem; color:#f1c40f; display:block; margin-top:8px;'>Required Quantity: <strong>{qty_str}</strong></span>"
-            recommendation += f"<span style='font-size:0.8rem; color:#bdc3c7'>(Calculated for {data.get('land_size')} {land_unit} based on standard dosage)</span>"
+        # 3. Calculate Quantity based on Land Size
+        land_size = float(data.get('land_size', 1))
+        land_unit = data.get('land_unit', 'acres')
+        
+        if land_unit == 'hectares':
+            land_size = land_size * 2.47
+        elif land_unit == 'sq_meter':
+            land_size = land_size / 4046.86
             
-        else:
-            recommendation = "Generic Fertilizer (NPK 19-19-19)"
-            if symptoms_input == 'yellow_leaves': recommendation = "Urea (Nitrogen)"
-            elif symptoms_input == 'stunted': recommendation = "DAP (Phosphorus)"
+        dosage_rate = 50 
+        if 'Urea' in recommended_fertilizer: dosage_rate = 45
+        elif 'DAP' in recommended_fertilizer: dosage_rate = 35
+        elif 'MOP' in recommended_fertilizer: dosage_rate = 25
+        elif 'NPK' in recommended_fertilizer: dosage_rate = 60
+        elif '14-35-14' in recommended_fertilizer: dosage_rate = 55
+        elif '10-26-26' in recommended_fertilizer: dosage_rate = 50
+        elif 'Ammonium' in recommended_fertilizer: dosage_rate = 40
+        elif '28-28' in recommended_fertilizer: dosage_rate = 50
+        elif '17-17-17' in recommended_fertilizer: dosage_rate = 50
+        
+        total_qty = dosage_rate * land_size
+        
+        qty_str = f"{total_qty:.1f} kg"
+        if total_qty > 1000:
+            qty_str = f"{total_qty/1000:.2f} Tonnes"
 
+        recommendation = f"{recommended_fertilizer}<br>"
+        recommendation += f"<span style='font-size:1rem; color:#f1c40f; display:block; margin-top:8px;'>Required Quantity: <strong>{qty_str}</strong></span>"
+        recommendation += f"<span style='font-size:0.8rem; color:#bdc3c7'>(Calculated for {data.get('land_size')} {land_unit} based on standard dosage)</span>"
+        
         return jsonify({'success': True, 'prediction': recommendation})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})

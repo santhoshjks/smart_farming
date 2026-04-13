@@ -7,6 +7,43 @@
         <p>Enter soil and weather conditions to find the most suitable crop.</p>
     </div>
 
+    <!-- Live Weather Card (shown after geolocation) -->
+    <div id="weatherCard" class="active-data-card">
+        <div class="card-glow"></div>
+        <div class="card-header">
+            <div class="header-left" style="display: flex; align-items: center; gap: 10px;">
+                <span class="location-icon" style="font-size: 1.4rem;">📍</span>
+                <span id="locationName" class="location-name">Detecting Location...</span>
+            </div>
+            <div class="header-right">
+                <span class="live-indicator">
+                    <span class="dot"></span> LIVE
+                </span>
+            </div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-item">
+                <div class="metric-icon">🌡️</div>
+                <div class="metric-content">
+                    <span class="metric-label">Temperature</span>
+                    <span id="cardTemp" class="metric-value">--</span>
+                </div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-icon">💧</div>
+                <div class="metric-content">
+                    <span class="metric-label">Humidity</span>
+                    <span id="cardHumidity" class="metric-value">--</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <p>Accuracy optimized for current local conditions</p>
+        </div>
+    </div>
+
     <form data-endpoint="/api/predict-crop-simplified">
         <div class="form-grid">
             <div class="form-group full-width">
@@ -39,6 +76,7 @@
                 <!-- Hidden inputs to store real data -->
                 <input type="hidden" name="real_temp" id="realTemp">
                 <input type="hidden" name="real_humidity" id="realHumidity">
+                <input type="hidden" name="location_name" id="locationNameInput">
                 <p id="weatherStatus" style="font-size: 0.8rem; color: #2ecc71; margin-top: 5px; display: none;"></p>
             </div>
 
@@ -54,4 +92,202 @@
         <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Recommend Best Crop</button>
     </form>
 </div>
+
+<style>
+    .active-data-card {
+        display: none;
+        position: relative;
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        overflow: hidden;
+        animation: cardAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-glow {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(46, 204, 113, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        position: relative;
+        gap: 15px;
+    }
+
+    .location-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #fff;
+        background: linear-gradient(to right, #fff, #2ecc71);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+        vertical-align: middle;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 220px;
+    }
+
+    .live-indicator {
+        background: rgba(46, 204, 113, 0.15);
+        color: #2ecc71;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.65rem;
+        font-weight: 900;
+        letter-spacing: 1.2px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid rgba(46, 204, 113, 0.2);
+    }
+
+    .dot {
+        width: 7px;
+        height: 7px;
+        background-color: #2ecc71;
+        border-radius: 50%;
+        box-shadow: 0 0 10px #2ecc71;
+        animation: pulse 2s infinite;
+    }
+
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
+        margin-bottom: 1.2rem;
+        position: relative;
+    }
+
+    .metric-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: transform 0.3s ease;
+    }
+
+    .metric-item:hover {
+        transform: translateY(-3px);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .metric-icon {
+        font-size: 1.8rem;
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.1));
+    }
+
+    .metric-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .metric-label {
+        font-size: 0.65rem;
+        color: #95a5a6;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    .metric-value {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #fff;
+    }
+
+    .card-footer {
+        font-size: 0.7rem;
+        color: #7f8c8d;
+        text-align: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 12px;
+        opacity: 0.8;
+    }
+
+    @keyframes cardAppear {
+        from {
+            opacity: 0;
+            transform: scale(0.98) translateY(15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(0.9);
+            opacity: 0.7;
+            box-shadow: 0 0 0px #2ecc71;
+        }
+
+        50% {
+            transform: scale(1.2);
+            opacity: 1;
+            box-shadow: 0 0 12px #2ecc71;
+        }
+
+        100% {
+            transform: scale(0.9);
+            opacity: 0.7;
+            box-shadow: 0 0 0px #2ecc71;
+        }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 600px) {
+        .metrics-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .active-data-card {
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+        }
+
+        .location-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(to right, #fff, #2ecc71);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 220px;
+        }
+    }
+</style>
 {% endblock %}

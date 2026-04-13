@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartFarming AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=7">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=8">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
     <nav>
-        <a href="/" class="logo">🌱 SmartFarming</a>
+        <a href="/" class="logo"><span>🌱</span> <span id="logoText">SmartFarming</span></a>
         <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation menu">
             <span></span>
             <span></span>
@@ -94,6 +94,12 @@
             </div>
         </div>
     </div>
+    <!-- Floating Tamil Language Toggle Button -->
+    <button type="button" class="floating-lang-btn" id="langToggleBtn" title="Switch to Tamil / தமிழுக்கு மாற்றவும்">
+        <span class="lang-icon" id="langIcon">EN</span>
+        <span class="floating-lang-label" id="langLabel">தமிழ்</span>
+    </button>
+
     <!-- Floating Report Button -->
     <a href="mailto:jkssanthosh38@gmail.com?subject=Bug%20Report%20-%20SmartFarming%20AI&body=Hi%20Team%2C%0A%0AI%20found%20an%20issue%3A%0A%0APage%3A%20%0ADescription%3A%20%0ASteps%20to%20Reproduce%3A%20%0A%0AThanks!"
         class="floating-report-btn" id="floatingReportBtn" title="Report an Issue">
